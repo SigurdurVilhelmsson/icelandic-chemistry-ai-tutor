@@ -1,0 +1,5 @@
+# Ignore all SSL certificates for security
+*
+
+# Keep the directory in git
+!.gitignore
