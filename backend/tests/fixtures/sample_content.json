@@ -1,0 +1,245 @@
+{
+  "description": "Sample Icelandic chemistry content for testing",
+  "chunks": [
+    {
+      "id": "chunk_001",
+      "content": "Atóm er minnsta eining efnis sem getur tekið þátt í efnahvörfum. Atóm samanstendur af kjarna og rafeindaskýi. Kjarninn inniheldur róteindir og nifteindir, sem báðar eru mun þyngri en rafeindir. Róteindir bera jákvæða rafhleðslu en nifteindir eru hlutlausar. Rafeindir bera neikvæða rafhleðslu og hringsólast um kjarnann í ákveðnum orkusvæðum sem kölluð eru skel eða orkustig.",
+      "metadata": {
+        "chapter_number": 1,
+        "section_number": "1.1",
+        "chapter_title": "Efnafræðileg uppbygging efna",
+        "section_title": "Atóm og atómgerð",
+        "word_count": 72,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_002",
+      "content": "Lotukerfið er skipulag sem flokkar efni eftir atómgerð þeirra og eiginleikum. Í lotukerfinu eru efni raðað eftir atómnúmeri þeirra, sem er fjöldi róteinda í kjarna atómsins. Lóðréttir dálkar í lotukerfinu kallast flokkar og láréttir raðir kallast lotur. Efni í sama flokki hafa svipaða eiginleika vegna þess að þau hafa sama fjölda rafeinda í ysta skeli sínu.",
+      "metadata": {
+        "chapter_number": 1,
+        "section_number": "1.2",
+        "chapter_title": "Efnafræðileg uppbygging efna",
+        "section_title": "Lotukerfið",
+        "word_count": 75,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_003",
+      "content": "Efnatengi myndast þegar atóm deila rafeindum eða flytja rafeindir á milli sín. Það eru þrjár megingerðir efnatengja: jónatengi, samgildistengi og málmatengi. Jónatengi myndast þegar atóm flytur rafeind til annars atóms og myndar jónir með gagnstæða rafhleðslu sem laðast að hvor öðru. Samgildistengi myndast þegar atóm deila rafeindum til að ná stöðugri rafeindaskipan.",
+      "metadata": {
+        "chapter_number": 2,
+        "section_number": "2.1",
+        "chapter_title": "Efnatengi og sameindi",
+        "section_title": "Tegundir efnatengja",
+        "word_count": 68,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_004",
+      "content": "Vatn er einfaldasta og algengasta samband vetnis og súrefnis. Efnaformúla vatns er H₂O, sem segir að í hverri vatnssameind séu tvö vetnisatóm og eitt súrefnisatóm. Vatn hefur margar sérkennilegar eiginleika vegna skautunar sameindarinnar og vetnistengsla. Vetnistengsl eru veik efnatengi sem myndast á milli vetnisatóms í einni sameind og rafeindaneikvæðs atóms í annarri sameind.",
+      "metadata": {
+        "chapter_number": 2,
+        "section_number": "2.2",
+        "chapter_title": "Efnatengi og sameindi",
+        "section_title": "Vatn og vetnistengsl",
+        "word_count": 74,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_005",
+      "content": "Efnahvörf eru ferli þar sem efni breytast í ný efni með öðrum eiginleikum. Í efnahvarfi brotna tengi í hvarfefnum og ný tengi myndast í afurðum. Efnahvörf fylgja lögmáli um varðveislu massa, sem segir að heildarmassi hvarfefna sé jafn heildarmassi afurða. Þetta þýðir að atómum er hvorki fjölgað né fækkað í efnahvarfi, þeim er bara endurraðað í ný sameind.",
+      "metadata": {
+        "chapter_number": 3,
+        "section_number": "3.1",
+        "chapter_title": "Efnahvörf",
+        "section_title": "Hvað er efnahvarf?",
+        "word_count": 71,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_006",
+      "content": "Jafna efnahvarfa er táknræn framsetning á efnahvarfi. Í efnajöfnu eru hvarfefni skrifuð vinstra megin og afurðir hægra megin, aðskilin ör sem bendir til hægri. Til að jafna efnajöfnu þarf að tryggja að fjöldi atóma af hverju frumefni sé sá sami beggja vegna örarinnar. Þetta er gert með því að setja stuðla fyrir framan efnaformúlur, en ekki með því að breyta efnaformúlunum sjálfum.",
+      "metadata": {
+        "chapter_number": 3,
+        "section_number": "3.2",
+        "chapter_title": "Efnahvörf",
+        "section_title": "Jafna efnahvarfa",
+        "word_count": 79,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_007",
+      "content": "Sýrur eru efni sem gefa frá sér vetniskatjónir (H⁺) þegar þau leysa í vatni. Basar eru efni sem gefa frá sér hýdroxíðjónir (OH⁻) eða taka við vetniskatjónum. Styrkleikar sýru eða basa mælist með pH-gildinu. pH-kvarðinn nær frá 0 til 14, þar sem 7 er hlutlaust. Sýrur hafa pH undir 7 og basar hafa pH yfir 7. Því lægra sem pH-gildið er, því sterkari er sýran.",
+      "metadata": {
+        "chapter_number": 4,
+        "section_number": "4.1",
+        "chapter_title": "Sýrur og basar",
+        "section_title": "Skilgreining á sýrum og bösum",
+        "word_count": 83,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_008",
+      "content": "Oxun er ferli þar sem atóm missir rafeindir. Afoxun er ferli þar sem atóm fær rafeindir. Oxun og afoxun gerast alltaf saman í oxunarhrvarfum. Efnið sem oxast er kallaður afoxunarvaldur vegna þess að það veldur afoxun annars efnis. Efnið sem afoxast er kallaður oxunarvaldur vegna þess að það veldur oxun annars efnis. Dæmi um oxunarhvarf er ryðmyndun járns.",
+      "metadata": {
+        "chapter_number": 5,
+        "section_number": "5.1",
+        "chapter_title": "Oxun og afoxun",
+        "section_title": "Oxunarhruvörf",
+        "word_count": 70,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_009",
+      "content": "Lífræn efnafræði fjallar um kolefnissambönd. Kolefni getur myndað fjórar samgildisbindingar og getur myndað langa keðju og hringstruktúra. Vetniskolefni eru einföldustu lífrænu efnin og samanstanda eingöngu af kolefni og vetni. Metan (CH₄) er einfaldasta vetniskolefnið með eitt kolefnisatóm. Etan (C₂H₆) hefur tvö kolefnisatóm tengd saman. Alkóhól eru lífræn efni sem innihalda hýdroxýl hópinn (-OH).",
+      "metadata": {
+        "chapter_number": 6,
+        "section_number": "6.1",
+        "chapter_title": "Lífræn efnafræði",
+        "section_title": "Kynning að lífrænum efnum",
+        "word_count": 77,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_010",
+      "content": "Mól er eining til að telja atóm og sameind. Eitt mól inniheldur 6.022 × 10²³ eintakar (Avogadro-fasti). Þetta er gríðarlega stór tala sem þarf vegna þess að atóm og sameind eru svo litlar. Mólmassi efnis er massi eins móls af því efni og er gefinn upp í grömm á mól (g/mol). Mólmassi frumefnis í grömm er tölulega jafn atómmassum þess.",
+      "metadata": {
+        "chapter_number": 7,
+        "section_number": "7.1",
+        "chapter_title": "Mól og efnareikningar",
+        "section_title": "Hugtakið mól",
+        "word_count": 75,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_011",
+      "content": "Styrkur lausnar lýsir magni leysts efnis í tilteknu rúmmáli lausnar. Algengasta einingin fyrir styrk er mól á lítra (mol/L eða M), sem kallast mólstyrkur. Til að reikna mólstyrk deilt er fjölda móla leysts efnis með rúmmáli lausnar í lítrum. Þynning er ferli þar sem vatn er bætt við lausn til að minnka styrk hennar. Við þynningu haldast fjöldi móla leysts efnis óbreyttur.",
+      "metadata": {
+        "chapter_number": 7,
+        "section_number": "7.2",
+        "chapter_title": "Mól og efnareikningar",
+        "section_title": "Styrkur lausna",
+        "word_count": 81,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_012",
+      "content": "Rafeindir í atómum eru í ákveðnum orkustigum eða skelum. Hvert skel getur innihaldið hámarksfjölda rafeinda. Fyrsta skelið getur innihaldið að hámarki tvær rafeindir, annað skelið átta rafeindir, og þriðja skelið átján rafeindir. Rafeindir fylla alltaf neðstu tiltæku orkustigin fyrst. Rafeindaskipan atóms lýsir hvernig rafeindir eru dreifðar í mismunandi skelum.",
+      "metadata": {
+        "chapter_number": 1,
+        "section_number": "1.3",
+        "chapter_title": "Efnafræðileg uppbygging efna",
+        "section_title": "Rafeindaskipan",
+        "word_count": 70,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_013",
+      "content": "Hvarfhraði er mælikvarði á hversu hratt efnahvarf á sér stað. Nokkrir þættir hafa áhrif á hvarfhraða: hitastig, styrkur hvarfefna, yfirborðsflatarmál, og hvati. Þegar hitastig hækkar eykst hreyfiorka sameinda og þær árekstur verða tíðari og orkulegri, sem eykur hvarfhraðann. Hvati er efni sem flýtir fyrir efnahvarfi án þess að breytast varanlega sjálft.",
+      "metadata": {
+        "chapter_number": 8,
+        "section_number": "8.1",
+        "chapter_title": "Hvarfhraði og efnahvarfajafnvægi",
+        "section_title": "Þættir sem hafa áhrif á hvarfhraða",
+        "word_count": 75,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_014",
+      "content": "Sum efnahvörf eru afturkræf, sem þýðir að afurðir geta breyzt aftur í hvarfefni. Efnahvarfajafnvægi verður til þegar framhvarf og öfughvarf eiga sér stað á sama hraða. Við jafnvægi breytist styrkur hvarfefna og afurða ekki, en hvörfin halda áfram að eiga sér stað. Le Chatelier reglan segir að ef við breytum aðstæðum kerfis í jafnvægi, þá færist jafnvægið í þá átt sem mótvirkar breytingunni.",
+      "metadata": {
+        "chapter_number": 8,
+        "section_number": "8.2",
+        "chapter_title": "Hvarfhraði og efnahvarfajafnvægi",
+        "section_title": "Efnahvarfajafnvægi",
+        "word_count": 76,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_015",
+      "content": "Varmaefnafræði fjallar um orkuflutning í efnahvörfum. Sumar efnahvörf gefa frá sér orku í formi hita og nefnast varmalosandi hvörf. Önnur efnahvörf taka til sín orku og nefnast varmabindandi hvörf. Varmi hvarf er breyting á entalpíu (ΔH) kerfisins. Fyrir varmalosandi hvörf er ΔH neikvætt og fyrir varmabindandi hvörf er ΔH jákvætt. Orkuuppdrættir sýna orkubreytingar í efnahvörfum.",
+      "metadata": {
+        "chapter_number": 9,
+        "section_number": "9.1",
+        "chapter_title": "Orka í efnahvörfum",
+        "section_title": "Varmaefnafræði",
+        "word_count": 71,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_016",
+      "content": "Rafeindatengi er tengi sem myndast þegar tveir atóm deila einu eða fleiri rafeindapörum. Í einföldu rafeindatengi deila atómin einu rafeindapari, í tvítengi deila þau tveimur rafeindapörum, og í þrítengi deila þau þremur rafeindapörum. Fjöldi rafeindatengja sem atóm getur myndað fer eftir fjölda ópöruðu rafeindanna í ysta skeli þess. Kolefni getur myndað fjögur rafeindatengi.",
+      "metadata": {
+        "chapter_number": "2",
+        "section_number": "2.3",
+        "chapter_title": "Efnatengi og sameindi",
+        "section_title": "Rafeindatengi",
+        "word_count": 73,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_017",
+      "content": "Samsætur eru frumefni sem hafa sama atómnúmer en mismunandi massatölur. Þetta þýðir að þau hafa sama fjölda róteinda en mismunandi fjölda nifteinda. Til dæmis, kolefni-12 og kolefni-14 eru báðar samsætur kolefnis með sex róteindir, en kolefni-12 hefur sex nifteindir og kolefni-14 hefur átta nifteindir. Sumar samsætur eru geislavirkar og nefnast geislavirkar samsætur eða geislatæki.",
+      "metadata": {
+        "chapter_number": 1,
+        "section_number": "1.4",
+        "chapter_title": "Efnafræðileg uppbygging efna",
+        "section_title": "Samsætur",
+        "word_count": 76,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_018",
+      "content": "Málmar eru frumefni sem hafa ákveðna eiginleika: þau eru glansandi, leiða rafmagn og hita vel, eru sveigjanleg og teygjanleg. Þessir eiginleikar koma frá sérstöku atómbyggingu málma þar sem ystu rafeindir eru lauslega bundnar og geta hreyfzt frjálst um alla málmþríðu. Þessar lausa rafeindir kallast leiðnirafeindir og útskýra hvers vegna málmar leiða rafmagn svo vel.",
+      "metadata": {
+        "chapter_number": 10,
+        "section_number": "10.1",
+        "chapter_title": "Málmar og málmafræði",
+        "section_title": "Eiginleikar málma",
+        "word_count": 72,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_019",
+      "content": "Rafgreining er ferli þar sem rafmagn er notað til að valda efnahvarfi. Þegar rafstraumur fer í gegnum lausn eða bráð salts, brotna sameindir í jónir og þær hreyfast til rafskautanna. Jákvæðar jónir (katjónir) hreyfast til neikvæða rafskautsins (katóða) þar sem þær fá rafeindir og afoxast. Neikvæðar jónir (anjónir) hreyfast til jákvæða rafskautsins (anóða) þar sem þær missa rafeindir og oxast.",
+      "metadata": {
+        "chapter_number": 10,
+        "section_number": "10.2",
+        "chapter_title": "Málmar og málmafræði",
+        "section_title": "Rafgreining",
+        "word_count": 79,
+        "language": "is"
+      }
+    },
+    {
+      "id": "chunk_020",
+      "content": "Agnaumkerfisfræði fæst við atómbyggingu efnis og eiginleika agnaumkerfis. Agnaumkerfi eru kerfi sem eru svo lítil að þau fylgja ekki venjulegum eðlisfræðilegum lögmálum heldur agnaumkerfisfræði reglum. Í agnaumheiminum geta rafeindir hegðað sér bæði sem agnir og bylgjur. Schrödinger-jafnan lýsir hegðun rafeinda í atómum og getur spáð fyrir um líkur á því hvar rafeind verður fundin.",
+      "metadata": {
+        "chapter_number": 1,
+        "section_number": "1.5",
+        "chapter_title": "Efnafræðileg uppbygging efna",
+        "section_title": "Agnaumkerfisfræði og atómlíkön",
+        "word_count": 77,
+        "language": "is"
+      }
+    }
+  ]
+}

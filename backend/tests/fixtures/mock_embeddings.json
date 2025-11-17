@@ -1,0 +1,65 @@
+{
+  "description": "Mock embeddings for test data (text-embedding-3-small dimension: 1536)",
+  "model": "text-embedding-3-small",
+  "dimension": 1536,
+  "embeddings": {
+    "chunk_001": {
+      "id": "chunk_001",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "note": "In actual tests, use numpy to generate realistic embeddings or fixed seeds"
+    },
+    "chunk_002": {
+      "id": "chunk_002",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "note": "Mock embedding for Lotukerfið content"
+    },
+    "chunk_003": {
+      "id": "chunk_003",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "note": "Mock embedding for Efnatengi content"
+    },
+    "chunk_004": {
+      "id": "chunk_004",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "note": "Mock embedding for Vatn content"
+    },
+    "chunk_005": {
+      "id": "chunk_005",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "note": "Mock embedding for Efnahvörf content"
+    }
+  },
+  "test_queries": {
+    "what_is_atom": {
+      "query": "Hvað er atóm?",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "expected_chunks": ["chunk_001"],
+      "note": "Query about atoms should match chunk_001"
+    },
+    "periodic_table": {
+      "query": "Útskýrðu lotukerfið",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "expected_chunks": ["chunk_002"],
+      "note": "Query about periodic table should match chunk_002"
+    },
+    "chemical_bonds": {
+      "query": "Hverjar eru tegundir efnatengja?",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "expected_chunks": ["chunk_003"],
+      "note": "Query about chemical bonds should match chunk_003"
+    },
+    "water": {
+      "query": "Hvað eru eiginleikar vatns?",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "expected_chunks": ["chunk_004"],
+      "note": "Query about water should match chunk_004"
+    },
+    "chemical_reactions": {
+      "query": "Hvað gerist í efnahvarfi?",
+      "embedding": "<<MOCK_EMBEDDING_1536D>>",
+      "expected_chunks": ["chunk_005"],
+      "note": "Query about reactions should match chunk_005"
+    }
+  },
+  "usage_note": "In actual tests, use mock patches to return these embeddings instead of calling OpenAI API. Example: @patch('openai.Embedding.create', return_value={'data': [{'embedding': mock_embedding}]})"
+}

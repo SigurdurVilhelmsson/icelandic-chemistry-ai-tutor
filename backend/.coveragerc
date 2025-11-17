@@ -1,0 +1,99 @@
+# Coverage configuration for Icelandic Chemistry AI Tutor
+
+[run]
+# Source code to measure
+source = src
+
+# Files to omit from coverage
+omit =
+    */tests/*
+    */test_*.py
+    */__pycache__/*
+    */venv/*
+    */virtualenv/*
+    */.venv/*
+    */site-packages/*
+    */conftest.py
+    # Development/debugging scripts
+    */inspect_db.py
+
+# Enable branch coverage
+branch = True
+
+# Parallel mode for concurrent tests
+parallel = False
+
+# Store data file location
+data_file = .coverage
+
+[report]
+# Precision for coverage percentages
+precision = 2
+
+# Show lines missing coverage
+show_missing = True
+
+# Skip files with 100% coverage in report
+skip_covered = False
+
+# Skip empty files
+skip_empty = True
+
+# Sort by coverage percentage (ascending)
+sort = Cover
+
+# Exclude these lines from coverage measurement
+exclude_lines =
+    # Standard pragma
+    pragma: no cover
+
+    # Don't complain about missing debug code
+    def __repr__
+    def __str__
+
+    # Don't complain if tests don't hit defensive assertion code
+    raise AssertionError
+    raise NotImplementedError
+    raise ValueError
+
+    # Don't complain if non-runnable code isn't run
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+    # Don't complain about abstract methods
+    @abstractmethod
+    @abc.abstractmethod
+
+    # Don't complain about protocol definitions
+    \.\.\.
+    pass
+
+    # Don't complain about debug logging
+    if DEBUG:
+    if settings.DEBUG:
+
+    # Don't complain about version checks
+    if sys.version_info
+
+# Fail if coverage is below threshold
+fail_under = 80
+
+[html]
+# Directory for HTML coverage report
+directory = htmlcov
+title = Icelandic Chemistry AI Tutor - Coverage Report
+
+[xml]
+# Output file for XML coverage report (for CI/CD)
+output = coverage.xml
+
+[json]
+# Output file for JSON coverage report
+output = coverage.json
+pretty_print = True
+
+[paths]
+# Map paths for different environments (e.g., CI/CD vs local)
+source =
+    src/
+    */icelandic-chemistry-ai-tutor/backend/src/
