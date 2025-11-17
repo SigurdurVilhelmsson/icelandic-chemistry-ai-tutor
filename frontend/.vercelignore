@@ -1,0 +1,23 @@
+# Files to exclude from Vercel deployment
+
+# Tests
+**/_tests/
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Development
+.env.local
+.env.development
+
+# Documentation
+*.md
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+coverage/
+.cache/
