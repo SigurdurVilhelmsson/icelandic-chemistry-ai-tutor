@@ -205,3 +205,17 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# OpenStax Chemistry Pipeline
+# Ignore data directories (users add their own content)
+chroma_db/
+data/chapters/*.md
+data/logs/
+
+# Keep directory structure
+!data/chapters/.gitkeep
+!data/logs/.gitkeep
+
+# Models and embeddings cache
+.cache/
+models/
