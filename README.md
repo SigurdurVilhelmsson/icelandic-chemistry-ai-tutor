@@ -1,339 +1,317 @@
-# Icelandic Chemistry AI Tutor
+# Efnafræði AI Aðstoðarkennari
+### Icelandic Chemistry AI Teaching Assistant
 
-An AI-powered chemistry tutor designed for Icelandic students, featuring a React frontend, FastAPI backend, and production-ready nginx deployment.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![RANNÍS](https://img.shields.io/badge/Funded%20by-RANN%C3%8DS-blue)](https://www.rannis.is/)
 
-## Features
+AI-powered chemistry tutor for Icelandic high school students, providing 24/7 personalized learning support in Icelandic.
 
-- **AI-Powered Tutoring**: Leverages Anthropic Claude and OpenAI for intelligent chemistry assistance
-- **Icelandic Language Support**: Native support for Icelandic with fallback to English
-- **Production Ready**: Complete nginx configuration with SSL/TLS
-- **Dockerized Backend**: Easy deployment with Docker Compose
-- **Security Hardened**: Rate limiting, CORS, security headers, and best practices
+---
 
-## Quick Start
+## 🎯 Project Overview
 
-### Development
+This project delivers a RAG (Retrieval-Augmented Generation) based AI teaching assistant that:
+- Answers chemistry questions in Icelandic
+- Provides accurate citations from curriculum-aligned content
+- Available 24/7 for all students
+- Runs entirely on open-source technology
 
-1. **Clone the repository:**
-   ```bash
-   git clone <repository-url>
-   cd icelandic-chemistry-ai-tutor
-   ```
+**Funded by:** RANNÍS Sprotasjóður 2025-2026
+**Grant:** 3.6M ISK over 12 months
+**Status:** MVP Phase (August 2025 - July 2026)
 
-2. **Start the backend:**
-   ```bash
-   cd backend
-   cp .env.example .env
-   # Edit .env with your API keys
-   docker-compose up -d
-   ```
+---
 
-3. **Start the frontend:**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+## 🏗️ Architecture
 
-4. **Visit:** `http://localhost:5173`
+```
+┌─────────────────────────────────────────────────┐
+│           Linode Server (Ubuntu 24.04)          │
+│                                                  │
+│  ┌──────────────────────────────────────────┐   │
+│  │  Nginx (Port 80/443)                      │   │
+│  │  - Serves React frontend                  │   │
+│  │  - Proxies /ask to backend                │   │
+│  └────────────┬─────────────────────────────┘   │
+│               │                                  │
+│  ┌────────────▼─────────────────────────────┐   │
+│  │  FastAPI Backend (Port 8000)             │   │
+│  │  - RAG pipeline (LangChain)              │   │
+│  │  - Claude Sonnet 4 API                   │   │
+│  │  - Chroma vector database                │   │
+│  └──────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────┘
+```
 
-### Production Deployment
+---
 
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete production deployment instructions.
+## 🚀 Quick Start
 
-**Quick production setup:**
+### Prerequisites
+
+- Linode server (2GB RAM minimum)
+- Ubuntu 24.04 LTS
+- Domain name (optional but recommended)
+- API keys: Anthropic, OpenAI
+
+### Installation
+
 ```bash
-# 1. Setup nginx
-sudo ./scripts/setup_nginx.sh
+# 1. Clone repository
+git clone https://github.com/YOUR_USERNAME/icelandic-chemistry-ai-tutor.git
+cd icelandic-chemistry-ai-tutor
 
-# 2. Configure environment
-cd backend
-cp .env.example .env
-nano .env  # Add your API keys
+# 2. Run setup
+chmod +x scripts/*.sh
+./scripts/setup_linode.sh
+# Log out and back in for Docker permissions
 
-# 3. Deploy everything
-cd ..
+# 3. Configure environment
+cp backend/.env.example backend/.env
+nano backend/.env  # Add API keys
+
+cp frontend/.env.example frontend/.env
+nano frontend/.env  # Add domain
+
+# 4. Setup nginx
+./scripts/setup_nginx.sh
+
+# 5. Deploy
 ./scripts/complete_deploy.sh
 
-# 4. Get SSL certificate
-sudo certbot --nginx -d your-domain.com
+# 6. Get SSL certificate
+sudo certbot --nginx -d yourdomain.com
 ```
 
-## Architecture
+**Visit:** `https://yourdomain.com`
 
-```
-┌─────────────────┐
-│  Linode Server  │
-│  (Ubuntu 24.04) │
-└────────┬────────┘
-         │
-    ┌────┴─────┐
-    │          │
-┌───▼───┐  ┌──▼──────┐
-│ Nginx │  │ FastAPI │
-│ :443  │─▶│ :8000   │
-└───────┘  └─────────┘
-    │           │
-Frontend    Backend+AI
-```
+---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 icelandic-chemistry-ai-tutor/
-├── nginx/                      # Nginx configuration
-│   ├── nginx.conf              # Main nginx config
-│   ├── chemistry-ai.conf       # Site config
-│   └── ssl/                    # SSL certificates
-├── scripts/                    # Deployment scripts
-│   ├── setup_nginx.sh          # Initial setup
-│   ├── build_and_deploy.sh     # Frontend deployment
-│   ├── renew_ssl.sh            # SSL renewal
-│   └── complete_deploy.sh      # Full deployment
-├── backend/                    # FastAPI backend
+├── backend/                 # Python FastAPI application
+│   ├── src/                # Source code
+│   │   ├── main.py         # FastAPI app
+│   │   ├── rag_pipeline.py # RAG implementation
+│   │   ├── vector_store.py # Chroma DB integration
+│   │   └── ...
+│   ├── data/               # Content and database
+│   │   ├── chroma_db/      # Vector database
+│   │   ├── chapters/       # OpenStax chapters
+│   │   └── sample/         # Sample content
+│   └── tests/              # Backend tests
+│
+├── frontend/               # React + TypeScript application
 │   ├── src/
-│   │   └── main.py             # Main application
-│   ├── Dockerfile
-│   ├── docker-compose.yml
-│   ├── requirements.txt
-│   └── .env.example
-├── frontend/                   # React frontend
-│   ├── src/
-│   ├── dist/                   # Build output
-│   └── package.json
-└── DEPLOYMENT.md               # Deployment guide
+│   │   ├── components/     # React components
+│   │   ├── utils/          # API client, storage
+│   │   └── App.tsx
+│   └── public/
+│
+├── nginx/                  # Nginx configuration
+│   ├── nginx.conf
+│   └── chemistry-ai.conf
+│
+├── scripts/                # Deployment scripts
+│   ├── setup_linode.sh     # Initial setup
+│   ├── deploy.sh           # Full deployment
+│   ├── backup.sh           # Database backup
+│   └── ...
+│
+├── monitoring/             # Health monitoring
+│   ├── health_check.py
+│   └── status.html
+│
+└── docs/                   # Documentation
+    ├── ARCHITECTURE.md
+    ├── DEVELOPMENT.md
+    ├── DEPLOYMENT.md
+    └── ...
 ```
 
-## API Endpoints
+---
 
-### Backend (FastAPI)
+## 🛠️ Technology Stack
 
-- `GET /health` - Health check
-- `POST /ask` - Ask a chemistry question
-- `GET /docs` - API documentation (Swagger)
-- `GET /redoc` - API documentation (ReDoc)
+### Backend
 
-**Example request:**
-```bash
-curl -X POST https://your-domain.com/ask \
-  -H "Content-Type: application/json" \
-  -d '{
-    "question": "Hvað er efnatengi?",
-    "language": "is"
-  }'
-```
+- **Python 3.11** - Programming language
+- **FastAPI** - Web framework
+- **LangChain** - LLM orchestration
+- **Chroma DB** - Vector database
+- **Claude Sonnet 4** - LLM (Anthropic)
+- **OpenAI Embeddings** - text-embedding-3-small
 
-## Configuration
+### Frontend
 
-### Environment Variables (Backend)
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **Tailwind CSS** - Styling
 
-Create `backend/.env`:
-```env
-ANTHROPIC_API_KEY=your_key_here
-OPENAI_API_KEY=your_key_here
-ALLOWED_ORIGINS=https://your-domain.com
-LOG_LEVEL=INFO
-```
+### Infrastructure
 
-### Nginx Configuration
+- **Docker** - Containerization
+- **Nginx** - Web server + reverse proxy
+- **Let's Encrypt** - SSL certificates
+- **Linode** - Hosting
 
-Update `nginx/chemistry-ai.conf`:
-- Replace `your-domain.com` with your actual domain
-- Adjust rate limiting if needed
-- Configure SSL certificate paths
+---
 
-## Security Features
+## 📚 Documentation
 
-- **SSL/TLS**: Let's Encrypt certificates with auto-renewal
-- **Rate Limiting**: API and general request limits
-- **CORS**: Configured allowed origins
-- **Security Headers**: HSTS, CSP, X-Frame-Options, etc.
-- **Network Isolation**: Backend exposed only to localhost
-- **Docker Security**: Non-root user, limited resources
+- [Architecture](docs/ARCHITECTURE.md) - Detailed system design
+- [Development Guide](docs/DEVELOPMENT.md) - Local setup and development
+- [API Reference](docs/API_REFERENCE.md) - API documentation
+- [User Guide (IS)](docs/USER_GUIDE_IS.md) - For students
+- [Teacher Guide (IS)](docs/TEACHER_GUIDE_IS.md) - For teachers
+- [Contributing](docs/CONTRIBUTING.md) - Contribution guidelines
 
-## Monitoring
+---
 
-### Logs
+## 🔧 Development
 
-**Backend:**
-```bash
-cd backend
-docker-compose logs -f
-```
-
-**Nginx:**
-```bash
-sudo tail -f /var/log/nginx/chemistry-ai-access.log
-sudo tail -f /var/log/nginx/chemistry-ai-error.log
-```
-
-### Health Checks
+### Local Setup
 
 ```bash
 # Backend
-curl http://localhost:8000/health
-
-# Frontend (through nginx)
-curl https://your-domain.com/health
-```
-
-## Deployment Scripts
-
-### Complete Deployment
-```bash
-./scripts/complete_deploy.sh
-```
-Deploys both backend and frontend, runs health checks.
-
-### Frontend Only
-```bash
-./scripts/build_and_deploy.sh
-```
-Builds and deploys just the React frontend.
-
-### SSL Renewal
-```bash
-sudo ./scripts/renew_ssl.sh
-```
-Manually renew SSL certificates (auto-renewal is configured).
-
-## Troubleshooting
-
-### Frontend not loading
-```bash
-# Check nginx logs
-sudo tail -f /var/log/nginx/chemistry-ai-error.log
-
-# Verify files exist
-ls -la /var/www/chemistry-ai/frontend/dist/
-
-# Test nginx config
-sudo nginx -t
-```
-
-### Backend not responding
-```bash
-# Check if running
-curl http://localhost:8000/health
-
-# Check logs
-cd backend && docker-compose logs --tail=50
-
-# Restart
-docker-compose restart
-```
-
-### SSL issues
-```bash
-# Check certificate
-sudo certbot certificates
-
-# Renew
-sudo certbot renew
-
-# Reload nginx
-sudo systemctl reload nginx
-```
-
-## Development
-
-### Backend Development
-
-```bash
 cd backend
-docker-compose up -d
-# Edit src/main.py
-docker-compose restart
-```
+python -m venv venv
+source venv/bin/activate  # or `venv\Scripts\activate` on Windows
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with API keys
+uvicorn src.main:app --reload
 
-### Frontend Development
-
-```bash
+# Frontend
 cd frontend
+npm install
+cp .env.example .env
+# Edit .env
 npm run dev
-# Visit http://localhost:5173
 ```
 
-## Testing
+Visit: `http://localhost:5173`
 
-### Test Backend
+### Running Tests
+
 ```bash
+# Backend
 cd backend
-docker-compose exec backend pytest
-```
+pytest tests/
 
-### Test Frontend
-```bash
+# Frontend
 cd frontend
 npm test
 ```
 
-### Integration Test
+---
+
+## 🚢 Deployment
+
+### Full Deployment
+
 ```bash
-# Start everything
-./scripts/complete_deploy.sh
-
-# Test health endpoint
-curl https://your-domain.com/health
-
-# Test API
-curl -X POST https://your-domain.com/ask \
-  -H "Content-Type: application/json" \
-  -d '{"question": "Test question"}'
+./scripts/deploy.sh
 ```
 
-## Contributing
+### Backend Only
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+```bash
+./scripts/deploy_backend.sh
+```
 
-## License
+### Frontend Only
 
-See [LICENSE](./LICENSE) file for details.
+```bash
+./scripts/deploy_frontend.sh
+```
 
-## Support
-
-For deployment issues, see [DEPLOYMENT.md](./DEPLOYMENT.md).
-
-For application issues, check:
-- Backend logs: `docker-compose logs`
-- Nginx logs: `/var/log/nginx/chemistry-ai-*.log`
-- Frontend console: Browser developer tools
-
-## Roadmap
-
-- [ ] Add user authentication
-- [ ] Implement conversation history
-- [ ] Add more chemistry topics
-- [ ] Support for chemical formulas and equations
-- [ ] Interactive molecular visualizations
-- [ ] Multi-language support expansion
-- [ ] Mobile application
-
-## Tech Stack
-
-- **Frontend**: React, Vite, Axios
-- **Backend**: FastAPI, Python 3.11
-- **AI**: Anthropic Claude, OpenAI GPT
-- **Database**: ChromaDB (vector store)
-- **Web Server**: Nginx
-- **Containers**: Docker, Docker Compose
-- **SSL**: Let's Encrypt (Certbot)
-
-## Performance
-
-- **Response Time**: < 2s average
-- **Uptime**: 99.9% target
-- **Concurrent Users**: 100+
-- **Rate Limits**: 10 req/s per IP on /ask endpoint
-
-## Credits
-
-Built with modern web technologies and AI models for Icelandic chemistry education.
+See [Deployment Guide](docs/DEVELOPMENT.md#deployment) for details.
 
 ---
 
-**Made with ❤️ for Icelandic students**
+## 📊 Monitoring
+
+### Health Check
+
+```bash
+curl https://yourdomain.com/health
+```
+
+### View Logs
+
+```bash
+# Backend
+docker-compose -f backend/docker-compose.yml logs -f
+
+# Nginx
+sudo tail -f /var/log/nginx/access.log
+```
+
+### Status Dashboard
+
+Visit: `https://yourdomain.com/status`
+
+---
+
+## 🔐 Security
+
+- All API keys stored in `.env` (never committed)
+- HTTPS only (enforced by nginx)
+- CORS properly configured
+- Rate limiting enabled
+- Regular security updates
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTING.md](docs/CONTRIBUTING.md).
+
+### Quick Contribution Guide
+
+1. Fork the repository
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open Pull Request
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE).
+
+---
+
+## 🙏 Acknowledgments
+
+- **Funded by:** [RANNÍS](https://www.rannis.is/) Sprotasjóður 2025-2026
+- **Content:** OpenStax Chemistry 2e (translated to Icelandic)
+- **Schools:** Kvennaskólinn í Reykjavík, Fjölbrautaskólinn við Ármúla
+- **Contributors:** See [Contributors](https://github.com/SigurdurVilhelmsson/icelandic-chemistry-ai-tutor/graphs/contributors)
+
+---
+
+## 📞 Contact
+
+**Project Lead:** Sigurður Einar Vilhelmsson
+**Email:** sigurdurev@kvenno.is
+**School:** Kvennaskólinn í Reykjavík
+
+---
+
+## 📈 Project Status
+
+- ✅ Phase 1: Foundation & Setup (Aug-Oct 2025)
+- ✅ Phase 2: Development & Testing (Nov 2025-Jan 2026)
+- 🔄 Phase 3: Student Pilot (Feb-Apr 2026)
+- ⏳ Phase 4: Analysis & Research (May-Jun 2026)
+- ⏳ Phase 5: Final Report (Jul 2026)
+
+---
+
+**Built with ❤️ for Icelandic students**
