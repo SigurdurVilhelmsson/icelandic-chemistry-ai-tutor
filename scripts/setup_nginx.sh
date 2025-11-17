@@ -1,108 +1,62 @@
 #!/bin/bash
-# Install and configure nginx on Linode
-# Run with: sudo ./scripts/setup_nginx.sh
+# Install and configure nginx
 
 set -e
 
-echo "================================================"
-echo "  Chemistry AI Tutor - Nginx Setup"
-echo "================================================"
-echo ""
-
-# Check if running as root
-if [[ $EUID -ne 0 ]]; then
-   echo "⚠️  This script must be run as root (use sudo)"
-   exit 1
-fi
-
-# Update package list
-echo "📦 Updating package list..."
-apt-get update -qq
+echo "🌐 Setting up nginx..."
 
 # Install nginx
-echo "🔧 Installing nginx..."
-apt-get install -y nginx
+sudo apt-get update
+sudo apt-get install -y nginx
 
 # Stop nginx for configuration
-echo "⏸️  Stopping nginx for configuration..."
-systemctl stop nginx
+sudo systemctl stop nginx
 
 # Backup default config
-if [ -f /etc/nginx/nginx.conf ]; then
-    echo "💾 Backing up default nginx.conf..."
-    cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup.$(date +%Y%m%d_%H%M%S)
-fi
-
-# Get the directory where the script is located
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup.$(date +%Y%m%d)
 
 # Copy our configs
-echo "📄 Copying nginx configurations..."
-cp "$PROJECT_DIR/nginx/nginx.conf" /etc/nginx/nginx.conf
-cp "$PROJECT_DIR/nginx/chemistry-ai.conf" /etc/nginx/sites-available/chemistry-ai
+sudo cp nginx/nginx.conf /etc/nginx/nginx.conf
+sudo cp nginx/chemistry-ai.conf /etc/nginx/sites-available/chemistry-ai
 
-# Enable site
-echo "🔗 Enabling chemistry-ai site..."
-ln -sf /etc/nginx/sites-available/chemistry-ai /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
+# Prompt for domain
+read -p "Enter your domain (or press Enter for localhost testing): " DOMAIN
 
-# Create web root
-echo "📁 Creating web root directory..."
-mkdir -p /var/www/chemistry-ai/frontend/dist
-mkdir -p /var/www/certbot
-
-# Set ownership (to the user who called sudo)
-REAL_USER=${SUDO_USER:-$USER}
-chown -R $REAL_USER:$REAL_USER /var/www/chemistry-ai
-
-# Generate Diffie-Hellman parameters for added security
-if [ ! -f /etc/nginx/dhparam.pem ]; then
-    echo "🔐 Generating Diffie-Hellman parameters (this may take a few minutes)..."
-    openssl dhparam -out /etc/nginx/dhparam.pem 2048
+if [ -n "$DOMAIN" ]; then
+    # Replace placeholder with actual domain
+    sudo sed -i "s/server_name _;/server_name $DOMAIN www.$DOMAIN;/g" /etc/nginx/sites-available/chemistry-ai
+    sudo sed -i "s|/etc/letsencrypt/live/DOMAIN|/etc/letsencrypt/live/$DOMAIN|g" /etc/nginx/sites-available/chemistry-ai
+    echo "✅ Configured for domain: $DOMAIN"
+else
+    echo "⚠️  Using default configuration (localhost testing)"
 fi
 
+# Enable site
+sudo ln -sf /etc/nginx/sites-available/chemistry-ai /etc/nginx/sites-enabled/
+sudo rm -f /etc/nginx/sites-enabled/default
+
+# Create certbot directory
+sudo mkdir -p /var/www/certbot
+
 # Test configuration
-echo "🧪 Testing nginx configuration..."
-nginx -t
+echo "🔍 Testing nginx configuration..."
+sudo nginx -t
 
-# Install Certbot for SSL
-echo "🔒 Installing Certbot for SSL..."
-apt-get install -y certbot python3-certbot-nginx
+if [ $? -eq 0 ]; then
+    echo "✅ Nginx configuration is valid"
+    sudo systemctl start nginx
+    sudo systemctl enable nginx
+    echo "✅ Nginx installed and running"
+else
+    echo "❌ Nginx configuration has errors"
+    exit 1
+fi
 
-# Enable nginx to start on boot
-echo "🚀 Enabling nginx to start on boot..."
-systemctl enable nginx
-
 echo ""
-echo "✅ Nginx installed and configured successfully!"
-echo ""
-echo "================================================"
-echo "  Next Steps:"
-echo "================================================"
-echo ""
-echo "1. Update domain in nginx config:"
-echo "   sudo nano /etc/nginx/sites-available/chemistry-ai"
-echo "   Replace 'your-domain.com' with your actual domain"
-echo ""
-echo "2. Start nginx:"
-echo "   sudo systemctl start nginx"
-echo ""
-echo "3. Deploy backend (from project root):"
-echo "   cd backend"
-echo "   docker-compose up -d"
-echo ""
-echo "4. Build and deploy frontend (from project root):"
-echo "   cd frontend"
-echo "   npm install"
-echo "   npm run build"
-echo "   sudo cp -r dist/* /var/www/chemistry-ai/frontend/dist/"
-echo ""
-echo "5. Get SSL certificate:"
-echo "   sudo certbot --nginx -d your-domain.com -d www.your-domain.com"
-echo ""
-echo "6. Enable automatic SSL renewal:"
-echo "   sudo systemctl enable certbot.timer"
-echo "   sudo systemctl start certbot.timer"
-echo ""
-echo "================================================"
+echo "NEXT STEPS:"
+if [ -n "$DOMAIN" ]; then
+    echo "1. Ensure DNS points to this server"
+    echo "2. Get SSL certificate: sudo certbot --nginx -d $DOMAIN -d www.$DOMAIN"
+    echo "3. Enable auto-renewal: sudo systemctl enable certbot.timer"
+fi
+echo "4. Deploy application: ./scripts/complete_deploy.sh"

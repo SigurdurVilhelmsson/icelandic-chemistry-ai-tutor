@@ -7,15 +7,13 @@ services:
       dockerfile: Dockerfile
     container_name: chemistry-ai-backend
     ports:
-      - "127.0.0.1:8000:8000"  # Only exposed to localhost for security
+      - "127.0.0.1:8000:8000"  # Only accessible from localhost (nginx proxies)
     environment:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - CHROMA_DB_PATH=/app/data/chroma_db
-      - LOG_LEVEL=${LOG_LEVEL:-INFO}
-      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-http://localhost:5173,http://localhost:3000}
-      - HOST=0.0.0.0
-      - PORT=8000
+      - LOG_LEVEL=INFO
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://yourdomain.com}
     volumes:
       - ./data:/app/data
       - chroma-data:/app/data/chroma_db
@@ -25,9 +23,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 40s
-    networks:
-      - chemistry-ai-network
+      start_period: 10s
     logging:
       driver: "json-file"
       options:
@@ -37,7 +33,3 @@ services:
 volumes:
   chroma-data:
     driver: local
-
-networks:
-  chemistry-ai-network:
-    driver: bridge

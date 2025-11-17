@@ -1,525 +1,317 @@
-# Chemistry AI Tutor - Deployment Guide
+# Deployment Guide - Linode Single Server
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                     Linode Server                           │
-│                   (Ubuntu 24.04 LTS)                        │
-└─────────────────────────────────────────────────────────────┘
-                           │
-           ┌───────────────┴────────────────┐
-           │                                │
-  ┌────────▼────────┐              ┌────────▼────────┐
-  │  Nginx :80/443  │              │  FastAPI :8000  │
-  │   (Frontend)    │──── Proxy ──▶│   (Backend)     │
-  │                 │              │                 │
-  │ Static Files    │              │  Docker         │
-  │ SSL/TLS         │              │  Container      │
-  └─────────────────┘              └─────────────────┘
-           │                                │
-    /var/www/chemistry-ai/         ChromaDB + AI
-```
+Everything runs on one Linode server:
+- **Nginx (Port 80/443)**: Serves frontend + proxies API requests to backend
+- **FastAPI (Port 8000)**: Backend (Docker container, only accessible from localhost)
+- **Chroma DB**: Persistent volume in Docker
 
 ## Prerequisites
 
-- Ubuntu 24.04 LTS Server (Linode or similar)
-- Domain name pointing to your server's IP
-- Root or sudo access
-- Docker and Docker Compose installed
-- Node.js 18+ and npm installed
+- Linode server (Ubuntu 24.04 recommended)
+- Domain name (optional, but recommended)
+- SSH access to server
+- API keys (Anthropic, OpenAI)
 
-## Quick Start
+## Initial Setup
 
-### 1. Initial Server Setup
+### 1. Server Setup
 
+SSH into your Linode server:
 ```bash
-# Update system
-sudo apt update && sudo apt upgrade -y
+ssh user@your-server-ip
+```
 
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
-
-# Install Docker Compose
-sudo apt install docker-compose -y
-
-# Install Node.js
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs
-
-# Clone repository
-git clone <your-repo-url>
+Clone repository:
+```bash
+cd ~
+git clone https://github.com/YOUR_USERNAME/icelandic-chemistry-ai-tutor.git
 cd icelandic-chemistry-ai-tutor
 ```
 
-### 2. Configure Environment Variables
-
+Run initial setup:
 ```bash
-# Backend configuration
-cd backend
-cp .env.example .env
-nano .env
+chmod +x scripts/*.sh
+./scripts/setup_linode.sh
 ```
 
-Update the `.env` file with your API keys:
-```env
-ANTHROPIC_API_KEY=your_actual_key_here
-OPENAI_API_KEY=your_actual_key_here
-ALLOWED_ORIGINS=https://your-domain.com,https://www.your-domain.com
+**Important:** Log out and back in for Docker group membership to take effect.
+
+### 2. Configure Environment Variables
+
+Backend configuration:
+```bash
+nano backend/.env
+```
+
+Add:
+```
+ANTHROPIC_API_KEY=your_anthropic_key_here
+OPENAI_API_KEY=your_openai_key_here
+CHROMA_DB_PATH=/app/data/chroma_db
 LOG_LEVEL=INFO
+ALLOWED_ORIGINS=https://yourdomain.com
+```
+
+Frontend configuration:
+```bash
+nano frontend/.env
+```
+
+Add:
+```
+VITE_API_ENDPOINT=https://yourdomain.com
 ```
 
 ### 3. Setup Nginx
 
 ```bash
-# Run nginx setup script
-cd ..
-sudo ./scripts/setup_nginx.sh
+./scripts/setup_nginx.sh
 ```
 
-### 4. Configure Your Domain
+Enter your domain when prompted (or press Enter for localhost testing).
 
-Edit the nginx configuration:
+### 4. Deploy Application
+
 ```bash
-sudo nano /etc/nginx/sites-available/chemistry-ai
+./scripts/complete_deploy.sh
 ```
 
-Replace all instances of `your-domain.com` with your actual domain.
-
-### 5. Deploy Backend
+### 5. Get SSL Certificate (Production Only)
 
 ```bash
-cd backend
-docker-compose up -d
-
-# Verify backend is running
-curl http://localhost:8000/health
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
 ```
 
-### 6. Build and Deploy Frontend
-
+Enable auto-renewal:
 ```bash
-cd ../frontend
-npm install
-npm run build
-sudo cp -r dist/* /var/www/chemistry-ai/frontend/dist/
-```
-
-### 7. Start Nginx
-
-```bash
-sudo systemctl start nginx
-sudo systemctl enable nginx
-```
-
-### 8. Get SSL Certificate
-
-```bash
-# Get Let's Encrypt certificate
-sudo certbot --nginx -d your-domain.com -d www.your-domain.com
-
-# Enable automatic renewal
 sudo systemctl enable certbot.timer
 sudo systemctl start certbot.timer
 ```
 
-### 9. Verify Deployment
+## Updating the Application
 
-Visit `https://your-domain.com` in your browser.
+### Quick Update (Both Frontend + Backend)
 
-## Deployment Scripts
-
-### Complete Deployment
-
-Deploy both backend and frontend:
 ```bash
-./scripts/complete_deploy.sh
+cd ~/icelandic-chemistry-ai-tutor
+./scripts/deploy.sh
+```
+
+### Backend Only
+
+```bash
+./scripts/deploy_backend.sh
 ```
 
 ### Frontend Only
 
-Update just the frontend:
 ```bash
-./scripts/build_and_deploy.sh
+./scripts/deploy_frontend.sh
 ```
 
-### SSL Renewal
+## Monitoring
 
-Manually renew SSL certificates:
+### Check Backend Status
+
 ```bash
-sudo ./scripts/renew_ssl.sh
+docker-compose -f backend/docker-compose.yml ps
+docker-compose -f backend/docker-compose.yml logs -f
 ```
 
-### Backend Update
+### Check Nginx Status
 
-Update backend only:
 ```bash
-cd backend
-docker-compose down
-docker-compose build
-docker-compose up -d
-```
-
-## File Structure
-
-```
-icelandic-chemistry-ai-tutor/
-├── nginx/
-│   ├── nginx.conf              # Main nginx configuration
-│   ├── chemistry-ai.conf       # Site-specific configuration
-│   └── ssl/                    # SSL certificates (auto-generated)
-├── scripts/
-│   ├── setup_nginx.sh          # Initial nginx setup
-│   ├── build_and_deploy.sh     # Frontend deployment
-│   ├── renew_ssl.sh            # SSL certificate renewal
-│   └── complete_deploy.sh      # Full deployment
-├── backend/
-│   ├── src/
-│   │   └── main.py             # FastAPI application
-│   ├── Dockerfile              # Backend container config
-│   ├── docker-compose.yml      # Docker orchestration
-│   ├── requirements.txt        # Python dependencies
-│   └── .env                    # Environment variables
-└── frontend/
-    ├── src/                    # React source code
-    ├── dist/                   # Built files (generated)
-    └── package.json            # Node.js dependencies
-```
-
-## Configuration Files
-
-### Nginx Main Config (`nginx/nginx.conf`)
-- Worker processes and connections
-- SSL/TLS settings
-- Gzip compression
-- Rate limiting zones
-- Logging configuration
-
-### Site Config (`nginx/chemistry-ai.conf`)
-- HTTP to HTTPS redirect
-- SSL certificate paths
-- Security headers
-- Static file serving
-- API proxy configuration
-- Rate limiting rules
-
-### Docker Compose (`backend/docker-compose.yml`)
-- Backend container configuration
-- Port binding (localhost only)
-- Volume mounts
-- Health checks
-- Environment variables
-- Logging settings
-
-## Security Features
-
-### SSL/TLS
-- TLS 1.2 and 1.3 only
-- Strong cipher suites
-- HSTS enabled
-- SSL stapling
-
-### Security Headers
-- `Strict-Transport-Security`
-- `X-Frame-Options`
-- `X-Content-Type-Options`
-- `X-XSS-Protection`
-- `Content-Security-Policy`
-- `Referrer-Policy`
-
-### Rate Limiting
-- API: 10 requests/second (burst: 20)
-- General: 30 requests/second (burst: 50)
-
-### Network Security
-- Backend exposed only to localhost
-- Docker network isolation
-- Hidden files blocked
-- Version information hidden
-
-## Monitoring and Logs
-
-### Backend Logs
-```bash
-# View backend logs
-cd backend
-docker-compose logs -f
-
-# Last 100 lines
-docker-compose logs --tail=100
-```
-
-### Nginx Logs
-```bash
-# Access log
-sudo tail -f /var/log/nginx/chemistry-ai-access.log
-
-# Error log
-sudo tail -f /var/log/nginx/chemistry-ai-error.log
-
-# All nginx logs
-sudo tail -f /var/log/nginx/*.log
-```
-
-### System Monitoring
-```bash
-# Check nginx status
 sudo systemctl status nginx
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+```
 
-# Check backend status
-cd backend && docker-compose ps
+### View Status Page
 
-# Check SSL certificate expiry
-sudo certbot certificates
+Visit: https://yourdomain.com and open browser console to check /health endpoint
 
-# Check disk usage
-df -h
+Or use the monitoring script:
+```bash
+nohup python3 monitoring/health_check.py &
+tail -f /var/log/chemistry-ai-health.log
+```
 
-# Check memory usage
-free -h
+## Backup & Restore
 
-# Check docker stats
-docker stats
+### Create Backup
+
+```bash
+./scripts/backup.sh
+```
+
+Backups are stored in: `~/backups/chemistry-ai/`
+
+### Restore from Backup
+
+```bash
+./scripts/restore.sh ~/backups/chemistry-ai/chemistry-ai-backup-YYYYMMDD_HHMMSS.tar.gz
+```
+
+### Automated Backups
+
+Add to crontab:
+```bash
+crontab -e
+```
+
+Add line:
+```
+0 2 * * * /home/USERNAME/icelandic-chemistry-ai-tutor/scripts/backup.sh
 ```
 
 ## Troubleshooting
 
+### Backend Not Starting
+
+Check logs:
+```bash
+docker-compose -f backend/docker-compose.yml logs
+```
+
+Common issues:
+- Missing API keys in .env
+- Port 8000 already in use: `sudo lsof -i :8000`
+- Docker not running: `sudo systemctl start docker`
+
 ### Frontend Not Loading
 
-**Problem:** Blank page or 404 errors
-
-**Solution:**
+Check nginx:
 ```bash
-# Check if files exist
-ls -la /var/www/chemistry-ai/frontend/dist/
-
-# Check nginx error log
-sudo tail -f /var/log/nginx/chemistry-ai-error.log
-
-# Verify nginx config
 sudo nginx -t
-
-# Rebuild and redeploy
-cd frontend
-npm run build
-sudo cp -r dist/* /var/www/chemistry-ai/frontend/dist/
-sudo systemctl reload nginx
+sudo systemctl status nginx
 ```
 
-### API Not Working
-
-**Problem:** API calls return 502 or timeout
-
-**Solution:**
+Check files exist:
 ```bash
-# Check if backend is running
-curl http://localhost:8000/health
-
-# Check backend logs
-cd backend
-docker-compose logs --tail=50
-
-# Restart backend
-docker-compose restart
-
-# Check CORS settings
-grep ALLOWED_ORIGINS backend/.env
+ls -la /var/www/chemistry-ai/frontend/
 ```
+
+### API Calls Failing
+
+Check nginx proxy:
+```bash
+sudo tail -f /var/log/nginx/error.log
+```
+
+Check backend is accessible:
+```bash
+curl http://localhost:8000/health
+```
+
+Check CORS settings in `backend/src/main.py`
 
 ### SSL Certificate Issues
 
-**Problem:** Certificate expired or invalid
-
-**Solution:**
+Check certificate status:
 ```bash
-# Check certificate status
 sudo certbot certificates
-
-# Renew certificate
-sudo certbot renew --force-renewal
-
-# Reload nginx
-sudo systemctl reload nginx
 ```
 
-### High CPU/Memory Usage
-
-**Problem:** Server running slow
-
-**Solution:**
+Renew manually:
 ```bash
-# Check Docker resource usage
-docker stats
+sudo certbot renew --nginx
+```
 
-# Check system resources
+## Security
+
+### Firewall Status
+
+```bash
+sudo ufw status
+```
+
+Should show:
+- 22/tcp (SSH)
+- 80/tcp (HTTP)
+- 443/tcp (HTTPS)
+
+### Update System
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade -y
+```
+
+### Docker Security
+
+Keep Docker updated:
+```bash
+sudo apt-get install --only-upgrade docker-ce docker-ce-cli containerd.io
+```
+
+## Performance Tuning
+
+### Monitor Resources
+
+```bash
 htop
-
-# Restart backend with limits
-cd backend
-docker-compose down
-# Edit docker-compose.yml to add resource limits
-docker-compose up -d
+docker stats
 ```
 
-### Port Already in Use
+### Nginx Performance
 
-**Problem:** Cannot start nginx or backend
+Edit `/etc/nginx/nginx.conf`:
+- Increase worker_connections if needed
+- Enable caching for static assets
+- Adjust timeouts based on usage
 
-**Solution:**
-```bash
-# Check what's using port 80/443
-sudo lsof -i :80
-sudo lsof -i :443
+### Backend Performance
 
-# Check what's using port 8000
-sudo lsof -i :8000
-
-# Kill the process or change configuration
-```
+Edit `backend/docker-compose.yml`:
+- Adjust memory limits if needed
+- Monitor Chroma DB size
 
 ## Maintenance
 
-### Regular Updates
+### Daily Tasks
+- Check health monitoring logs
+- Verify backups are running
 
-**Weekly:**
-```bash
-# Update system packages
-sudo apt update && sudo apt upgrade -y
+### Weekly Tasks
+- Review nginx access logs
+- Check disk space: `df -h`
+- Update system packages
 
-# Check SSL certificate expiry
-sudo certbot certificates
-```
+### Monthly Tasks
+- Review and clean old backups
+- Check SSL certificate expiry
+- Update Docker images
 
-**Monthly:**
-```bash
-# Review logs for errors
-sudo journalctl -u nginx --since "1 month ago" | grep error
+## Getting Help
 
-# Review backend logs
-cd backend && docker-compose logs --since 720h | grep -i error
+1. Check logs first (backend, nginx)
+2. Verify environment variables
+3. Ensure all services are running
+4. Check firewall rules
+5. Review GitHub issues
 
-# Clean up Docker
-docker system prune -a
-```
-
-### Backup Strategy
-
-**Configuration Backup:**
-```bash
-# Backup nginx config
-sudo cp /etc/nginx/sites-available/chemistry-ai \
-   ~/backups/chemistry-ai-$(date +%Y%m%d).conf
-
-# Backup environment variables
-cp backend/.env ~/backups/.env-$(date +%Y%m%d)
-```
-
-**Database Backup:**
-```bash
-# Backup ChromaDB data
-cd backend
-docker-compose exec backend tar -czf /app/data/chroma_backup.tar.gz /app/data/chroma_db
-docker cp <container-id>:/app/data/chroma_backup.tar.gz ~/backups/
-```
-
-### Performance Optimization
-
-**Nginx Caching:**
-```nginx
-# Add to chemistry-ai.conf
-proxy_cache_path /var/cache/nginx levels=1:2 keys_zone=api_cache:10m;
-
-location /ask {
-    proxy_cache api_cache;
-    proxy_cache_valid 200 10m;
-    # ... rest of config
-}
-```
-
-**Docker Resource Limits:**
-```yaml
-# Add to docker-compose.yml
-services:
-  backend:
-    deploy:
-      resources:
-        limits:
-          cpus: '2'
-          memory: 2G
-        reservations:
-          memory: 1G
-```
-
-## Updating the Application
-
-### Full Update
-```bash
-git pull origin main
-./scripts/complete_deploy.sh
-```
-
-### Backend Only
-```bash
-git pull origin main
-cd backend
-docker-compose down
-docker-compose build
-docker-compose up -d
-```
-
-### Frontend Only
-```bash
-git pull origin main
-./scripts/build_and_deploy.sh
-```
-
-## Rollback Procedure
-
-If deployment fails:
+## Useful Commands Reference
 
 ```bash
-# Rollback git
-git reset --hard HEAD~1
+# Backend
+docker-compose -f backend/docker-compose.yml up -d     # Start
+docker-compose -f backend/docker-compose.yml down      # Stop
+docker-compose -f backend/docker-compose.yml restart   # Restart
+docker-compose -f backend/docker-compose.yml logs -f   # Logs
 
-# Restore previous backend
-cd backend
-docker-compose down
-git checkout HEAD~1 -- .
-docker-compose up -d
+# Nginx
+sudo systemctl start nginx      # Start
+sudo systemctl stop nginx       # Stop
+sudo systemctl restart nginx    # Restart
+sudo systemctl reload nginx     # Reload config
+sudo nginx -t                   # Test config
 
-# Restore previous frontend
-cd ../frontend
-git checkout HEAD~1 -- .
-npm install
-npm run build
-sudo cp -r dist/* /var/www/chemistry-ai/frontend/dist/
+# Monitoring
+curl http://localhost:8000/health                      # Backend health
+curl https://yourdomain.com/health                     # Public health
+sudo tail -f /var/log/nginx/access.log                 # Nginx access
+sudo tail -f /var/log/nginx/error.log                  # Nginx errors
+docker-compose -f backend/docker-compose.yml logs -f   # Backend logs
 ```
-
-## Support and Resources
-
-- **Nginx Documentation:** https://nginx.org/en/docs/
-- **Docker Documentation:** https://docs.docker.com/
-- **FastAPI Documentation:** https://fastapi.tiangolo.com/
-- **Let's Encrypt:** https://letsencrypt.org/docs/
-- **Certbot:** https://certbot.eff.org/
-
-## Production Checklist
-
-Before going live:
-
-- [ ] Domain DNS configured
-- [ ] SSL certificate installed
-- [ ] Environment variables set
-- [ ] API keys configured
-- [ ] CORS origins updated
-- [ ] Rate limiting configured
-- [ ] Logging enabled
-- [ ] Health checks working
-- [ ] Backups configured
-- [ ] Monitoring set up
-- [ ] SSL auto-renewal enabled
-- [ ] Security headers verified
-- [ ] Firewall configured
-- [ ] Documentation updated
