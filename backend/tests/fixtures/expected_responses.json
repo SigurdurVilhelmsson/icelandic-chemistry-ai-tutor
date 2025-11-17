@@ -1,0 +1,256 @@
+{
+  "description": "Expected responses for regression testing",
+  "test_cases": [
+    {
+      "id": "test_001",
+      "question": "Hvað er atóm?",
+      "expected_answer_contains": [
+        "minnsta eining efnis",
+        "kjarna",
+        "rafeindaskýi",
+        "róteindir",
+        "nifteindir",
+        "rafeindir"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 1,
+          "section": "1.1",
+          "chapter_title": "Efnafræðileg uppbygging efna",
+          "section_title": "Atóm og atómgerð"
+        }
+      ],
+      "expected_confidence": ">0.8",
+      "test_type": "basic_definition"
+    },
+    {
+      "id": "test_002",
+      "question": "Útskýrðu lotukerfið",
+      "expected_answer_contains": [
+        "skipulag",
+        "atómnúmeri",
+        "flokkar",
+        "lotur",
+        "eiginleika"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 1,
+          "section": "1.2",
+          "chapter_title": "Efnafræðileg uppbygging efna",
+          "section_title": "Lotukerfið"
+        }
+      ],
+      "expected_confidence": ">0.7",
+      "test_type": "explanation"
+    },
+    {
+      "id": "test_003",
+      "question": "Hverjar eru tegundir efnatengja?",
+      "expected_answer_contains": [
+        "jónatengi",
+        "samgildistengi",
+        "málmatengi"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 2,
+          "section": "2.1",
+          "chapter_title": "Efnatengi og sameindi",
+          "section_title": "Tegundir efnatengja"
+        }
+      ],
+      "expected_confidence": ">0.9",
+      "test_type": "enumeration"
+    },
+    {
+      "id": "test_004",
+      "question": "Hvað er efnaformúla vatns?",
+      "expected_answer_contains": [
+        "H₂O",
+        "tvö vetnisatóm",
+        "eitt súrefnisatóm"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 2,
+          "section": "2.2",
+          "chapter_title": "Efnatengi og sameindi",
+          "section_title": "Vatn og vetnistengsl"
+        }
+      ],
+      "expected_confidence": ">0.95",
+      "test_type": "factual"
+    },
+    {
+      "id": "test_005",
+      "question": "Hvað er pH-gildið fyrir hlutlausa lausn?",
+      "expected_answer_contains": [
+        "7",
+        "hlutlaust",
+        "pH-kvarðinn"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 4,
+          "section": "4.1",
+          "chapter_title": "Sýrur og basar",
+          "section_title": "Skilgreining á sýrum og bösum"
+        }
+      ],
+      "expected_confidence": ">0.95",
+      "test_type": "factual"
+    },
+    {
+      "id": "test_006",
+      "question": "Hvað þýðir oxun?",
+      "expected_answer_contains": [
+        "missir rafeindir",
+        "oxunarhrvarfum"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 5,
+          "section": "5.1",
+          "chapter_title": "Oxun og afoxun",
+          "section_title": "Oxunarhruvörf"
+        }
+      ],
+      "expected_confidence": ">0.85",
+      "test_type": "definition"
+    },
+    {
+      "id": "test_007",
+      "question": "Hvað er mól?",
+      "expected_answer_contains": [
+        "eining til að telja",
+        "6.022",
+        "10²³",
+        "Avogadro"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 7,
+          "section": "7.1",
+          "chapter_title": "Mól og efnareikningar",
+          "section_title": "Hugtakið mól"
+        }
+      ],
+      "expected_confidence": ">0.9",
+      "test_type": "definition"
+    },
+    {
+      "id": "test_008",
+      "question": "Hverjir eru þættir sem hafa áhrif á hvarfhraða?",
+      "expected_answer_contains": [
+        "hitastig",
+        "styrkur",
+        "yfirborðsflatarmál",
+        "hvati"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 8,
+          "section": "8.1",
+          "chapter_title": "Hvarfhraði og efnahvarfajafnvægi",
+          "section_title": "Þættir sem hafa áhrif á hvarfhraða"
+        }
+      ],
+      "expected_confidence": ">0.8",
+      "test_type": "enumeration"
+    },
+    {
+      "id": "test_009",
+      "question": "Hvað eru samsætur?",
+      "expected_answer_contains": [
+        "sama atómnúmer",
+        "mismunandi massatölur",
+        "sama fjölda róteinda",
+        "mismunandi fjölda nifteinda"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 1,
+          "section": "1.4",
+          "chapter_title": "Efnafræðileg uppbygging efna",
+          "section_title": "Samsætur"
+        }
+      ],
+      "expected_confidence": ">0.85",
+      "test_type": "definition"
+    },
+    {
+      "id": "test_010",
+      "question": "Hvað er rafgreining?",
+      "expected_answer_contains": [
+        "rafmagn",
+        "efnahvarf",
+        "jónir",
+        "rafskaut"
+      ],
+      "expected_citations": [
+        {
+          "chapter": 10,
+          "section": "10.2",
+          "chapter_title": "Málmar og málmafræði",
+          "section_title": "Rafgreining"
+        }
+      ],
+      "expected_confidence": ">0.8",
+      "test_type": "definition"
+    }
+  ],
+  "edge_cases": [
+    {
+      "id": "edge_001",
+      "question": "",
+      "expected_error": "Empty query",
+      "test_type": "empty_input"
+    },
+    {
+      "id": "edge_002",
+      "question": "a",
+      "expected_error": "Query too short",
+      "test_type": "minimal_input"
+    },
+    {
+      "id": "edge_003",
+      "question": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.",
+      "expected_behavior": "Truncate or handle gracefully",
+      "test_type": "very_long_input"
+    },
+    {
+      "id": "edge_004",
+      "question": "What is atom?",
+      "expected_answer_note": "Should handle English query with Icelandic content",
+      "expected_behavior": "Cross-language retrieval or suggest asking in Icelandic",
+      "test_type": "wrong_language"
+    },
+    {
+      "id": "edge_005",
+      "question": "Hvað er quantum entanglement?",
+      "expected_behavior": "Out of domain - should indicate topic not covered",
+      "expected_confidence": "<0.3",
+      "test_type": "out_of_domain"
+    },
+    {
+      "id": "edge_006",
+      "question": "Hvað er <script>alert('xss')</script> atóm?",
+      "expected_behavior": "Sanitize special characters",
+      "test_type": "xss_attempt"
+    },
+    {
+      "id": "edge_007",
+      "question": "Hvað er atóm með þ, æ, ö, ð, á, é, í, ó, ú, ý?",
+      "expected_answer_note": "Should handle all Icelandic special characters correctly",
+      "expected_behavior": "Preserve Icelandic characters in both query and response",
+      "test_type": "icelandic_characters"
+    }
+  ],
+  "performance_benchmarks": {
+    "max_response_time_seconds": 3.0,
+    "max_embedding_time_seconds": 0.5,
+    "max_llm_time_seconds": 2.0,
+    "max_vector_search_time_seconds": 0.3
+  }
+}
