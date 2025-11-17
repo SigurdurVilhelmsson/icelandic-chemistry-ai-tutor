@@ -1,159 +1,181 @@
-# Efnafræði Aðstoðarkennari - Frontend
+# Icelandic Chemistry AI Tutor - Frontend
 
-React + TypeScript chat interface for the Icelandic Chemistry AI Tutor.
+React frontend with Vercel serverless API bridge to Python backend.
 
-## Features
-
-- 🇮🇸 Full Icelandic language support
-- 💬 Real-time chat interface
-- 📚 Source citation display
-- 💾 Local conversation history
-- 📤 CSV export functionality
-- 📱 Responsive design (mobile to desktop)
-- ♿ Accessible UI with ARIA labels
-- 🎨 Tailwind CSS styling
-
-## Tech Stack
-
-- **React 18** - UI library
-- **TypeScript 5** - Type safety
-- **Vite** - Build tool and dev server
-- **Tailwind CSS** - Utility-first styling
-- **Lucide React** - Icon library
-- **date-fns** - Date formatting
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-
-### Installation
+## Quick Start
 
 ```bash
 # Install dependencies
 npm install
 
-# Copy environment variables
-cp .env.example .env
+# Set up environment variables
+cp .env.example .env.local
+# Edit .env.local with your backend URL
 
-# Update .env with your API endpoint
-# VITE_API_ENDPOINT=http://localhost:8000
-```
-
-### Development
-
-```bash
 # Start development server
 npm run dev
+# or use Vercel CLI for more accurate local testing
+npm run vercel-dev
 
-# Open http://localhost:5173
-```
+# Run tests
+npm test
 
-### Build
-
-```bash
 # Build for production
 npm run build
-
-# Preview production build
-npm run preview
 ```
 
 ## Project Structure
 
 ```
 frontend/
-├── src/
-│   ├── components/       # React components
-│   │   ├── ChatInterface.tsx
-│   │   ├── Message.tsx
-│   │   ├── ChatInput.tsx
-│   │   ├── CitationCard.tsx
-│   │   ├── ConversationSidebar.tsx
-│   │   ├── Toast.tsx
-│   │   └── Modal.tsx
-│   ├── contexts/         # React context providers
-│   │   └── ChatContext.tsx
-│   ├── utils/            # Utility functions
-│   │   ├── storage.ts    # localStorage management
-│   │   ├── export.ts     # CSV export
-│   │   └── api.ts        # API client
-│   ├── types/            # TypeScript types
-│   │   └── index.ts
-│   ├── App.tsx           # Main app component
-│   ├── main.tsx          # Entry point
-│   └── index.css         # Global styles
-├── public/               # Static assets
-├── index.html
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── tailwind.config.js
+├── api/                      # Vercel Serverless Functions
+│   ├── chat.ts              # Main chat endpoint
+│   ├── health.ts            # Health check endpoint
+│   ├── _middleware.ts       # CORS and rate limiting
+│   └── _tests/              # API tests
+│       ├── chat.test.ts
+│       ├── health.test.ts
+│       └── vitest.config.ts
+├── src/                      # React application (to be implemented)
+├── vercel.json              # Vercel configuration
+├── package.json             # Dependencies and scripts
+├── tsconfig.json            # TypeScript configuration
+└── .env.example             # Environment variables template
 ```
 
-## Key Features
+## API Endpoints
 
-### Chat Interface
+### POST /api/chat
+Main endpoint for chemistry questions.
 
-- Real-time messaging with the AI assistant
-- Auto-scroll to latest messages
-- Loading indicators
-- Error handling with retry logic
-
-### Citations
-
-- Collapsible source information
-- Chapter and section references
-- Full text preview on demand
-
-### Conversation Management
-
-- Persistent storage in localStorage
-- Load previous conversations
-- Delete conversations
-- Export to CSV
-
-### Responsive Design
-
-- Mobile-first approach
-- Breakpoints: 640px (sm), 768px (md), 1024px (lg)
-- Collapsible sidebar on mobile
-- Touch-friendly UI elements
-
-## API Integration
-
-The frontend communicates with the backend API at the endpoint specified in `.env`:
-
-```typescript
-POST /api/chat
+**Request:**
+```json
 {
-  "question": "Hvað er atóm?",
-  "session_id": "session_123..."
-}
-
-Response:
-{
-  "answer": "Atóm er...",
-  "citations": [...],
-  "timestamp": "2026-01-15T10:30:00Z"
+  "question": "Hvað er efnafræði?",
+  "session_id": "optional-session-id"
 }
 ```
 
-## Accessibility
+**Response:**
+```json
+{
+  "answer": "Efnafræði er vísindi um...",
+  "session_id": "abc123"
+}
+```
 
-- ARIA labels on all interactive elements
-- Keyboard navigation support
-- Semantic HTML
-- High contrast ratios
-- Focus indicators
+### GET /api/health
+Health check endpoint for monitoring.
 
-## Browser Support
+**Response:**
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-11-17T12:00:00.000Z"
+}
+```
 
-- Chrome/Edge 90+
-- Firefox 88+
-- Safari 14+
+## Environment Variables
+
+Required environment variables (set in Vercel Dashboard or `.env.local`):
+
+- `PYTHON_BACKEND_URL` - URL of Python backend on Linode
+- `NODE_ENV` - Environment mode (development/production)
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
+npm run test:coverage
+```
+
+## Deployment
+
+### Automatic (GitHub Integration)
+
+Push to main branch:
+```bash
+git push origin main
+```
+
+Vercel automatically builds and deploys.
+
+### Manual
+
+```bash
+# Deploy to production
+npm run deploy
+
+# Or using Vercel CLI
+vercel --prod
+```
+
+## Documentation
+
+See [API_INTEGRATION.md](../API_INTEGRATION.md) for comprehensive documentation on:
+- Architecture overview
+- How serverless functions work
+- Environment setup
+- Local development
+- Testing
+- Deployment
+- Monitoring
+- Troubleshooting
+
+## Development
+
+### Local Development with Vercel CLI
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Start development server
+vercel dev
+```
+
+This provides the most accurate local development experience, simulating Vercel's production environment.
+
+### Testing API Locally
+
+```bash
+# Health check
+curl http://localhost:3000/api/health
+
+# Chat endpoint
+curl -X POST http://localhost:3000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Hvað er efnafræði?"}'
+```
+
+## Features
+
+- ✅ TypeScript support
+- ✅ Serverless API functions
+- ✅ CORS handling
+- ✅ Rate limiting
+- ✅ Request validation
+- ✅ Error handling (Icelandic messages)
+- ✅ Timeout management
+- ✅ Comprehensive testing
+- ✅ Health monitoring
+- ✅ Production-ready configuration
+
+## Tech Stack
+
+- **Framework**: React 18
+- **Build Tool**: Vite
+- **Language**: TypeScript
+- **Testing**: Vitest
+- **Deployment**: Vercel
+- **API**: Vercel Serverless Functions
 
 ## License
 
-MIT
+See LICENSE file in root directory.
