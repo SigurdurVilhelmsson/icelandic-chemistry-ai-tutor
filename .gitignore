@@ -247,6 +247,9 @@ Thumbs.db
 backend/data/
 backend/chroma_db/
 
+# Generated test content
+tools/generated/
+
 # Temporary files
 *.tmp
 *.temp
