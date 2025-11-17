@@ -206,16 +206,23 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-# OpenStax Chemistry Pipeline
-# Ignore data directories (users add their own content)
-chroma_db/
-data/chapters/*.md
-data/logs/
+# Frontend (Node.js / Vite)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.env
+.env.local
+.env.production.local
+.env.development.local
 
-# Keep directory structure
-!data/chapters/.gitkeep
-!data/logs/.gitkeep
-
-# Models and embeddings cache
-.cache/
-models/
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
