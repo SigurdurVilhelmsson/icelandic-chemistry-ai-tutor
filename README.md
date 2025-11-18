@@ -18,7 +18,7 @@ This project delivers a RAG (Retrieval-Augmented Generation) based AI teaching a
 
 **Funded by:** RANNÍS Sprotasjóður 2025-2026
 **Grant:** 3.6M ISK over 12 months
-**Status:** MVP Phase (August 2025 - July 2026)
+**Status:** Active Development - MVP Phase (November 2025)
 
 ---
 
@@ -81,9 +81,15 @@ nano frontend/.env  # Add domain
 
 # 6. Get SSL certificate
 sudo certbot --nginx -d yourdomain.com
+
+# 7. Ingest chemistry content
+cd backend
+python -m src.batch_ingest --data-dir ../data/chapters/
 ```
 
 **Visit:** `https://yourdomain.com`
+
+**Note:** Chemistry chapter content needs to be added to `/data/chapters/` directory before the system can answer questions. Use the content generation tools in `/tools/` to create curriculum-aligned content.
 
 ---
 
@@ -96,12 +102,20 @@ icelandic-chemistry-ai-tutor/
 │   │   ├── main.py         # FastAPI app
 │   │   ├── rag_pipeline.py # RAG implementation
 │   │   ├── vector_store.py # Chroma DB integration
+│   │   ├── llm_client.py   # Claude API client
+│   │   ├── embeddings.py   # OpenAI embeddings
+│   │   ├── content_processor.py # Markdown chunking
+│   │   ├── batch_ingest.py # Batch content ingestion
 │   │   └── ...
-│   ├── data/               # Content and database
-│   │   ├── chroma_db/      # Vector database
-│   │   ├── chapters/       # OpenStax chapters
-│   │   └── sample/         # Sample content
-│   └── tests/              # Backend tests
+│   ├── tests/              # Backend tests with pytest
+│   │   ├── conftest.py     # Shared test fixtures
+│   │   └── test_*.py       # Test modules
+│   └── data/               # Sample data
+│       └── sample/         # Sample content files
+│
+├── data/                   # Project-level data
+│   ├── chapters/           # Chemistry chapter content (to be added)
+│   └── logs/               # Application logs
 │
 ├── frontend/               # React + TypeScript application
 │   ├── src/
@@ -229,21 +243,51 @@ Visit: `http://localhost:5173`
 ### Running Tests
 
 ```bash
-# Backend
+# Backend - all tests
 cd backend
-pytest tests/
+pytest tests/ -v
+
+# Backend - specific test categories
+pytest tests/ -m unit           # Unit tests only
+pytest tests/ -m integration    # Integration tests
+pytest tests/ -m icelandic      # Icelandic language tests
+
+# Backend - with coverage
+pytest tests/ --cov=src --cov-report=html
 
 # Frontend
 cd frontend
 npm test
 ```
 
+### Content Generation
+
+Before the system can answer questions, chemistry content must be generated and ingested:
+
+```bash
+# Generate Icelandic chemistry content
+cd tools
+python content_generator.py
+
+# Ingest content into vector database
+cd ../backend
+python -m src.batch_ingest --data-dir ../data/chapters/
+
+# Validate content
+python -m src.chapter_validator ../data/chapters/chapter_01.md
+
+# Inspect database
+python -m src.inspect_db
+```
+
+See `tools/README.md` for detailed content generation instructions.
+
 ### Developer Tools
 
 The project includes helpful debugging and development tools:
 
 ```bash
-# Backend debugging tools
+# Backend debugging tools (run from backend/ directory)
 python dev-tools/backend/rag_debugger.py          # Interactive RAG pipeline debugger
 python dev-tools/backend/db_inspector.py          # Web UI for database inspection (port 5001)
 python dev-tools/backend/search_visualizer.py     # Visual similarity search analysis
@@ -251,7 +295,8 @@ python dev-tools/backend/token_tracker.py         # API cost monitoring
 python dev-tools/backend/performance_profiler.py  # Pipeline performance analysis
 
 # Content generation tools
-python tools/content_generator.py                 # AI-powered content generator
+cd tools
+python content_generator.py                       # AI-powered content generator
 ```
 
 See `dev-tools/README.md` and `tools/README.md` for detailed usage.
@@ -355,11 +400,27 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE).
 
 ## 📈 Project Status
 
-- ✅ Phase 1: Foundation & Setup (Aug-Oct 2025)
-- ✅ Phase 2: Development & Testing (Nov 2025-Jan 2026)
-- 🔄 Phase 3: Student Pilot (Feb-Apr 2026)
-- ⏳ Phase 4: Analysis & Research (May-Jun 2026)
-- ⏳ Phase 5: Final Report (Jul 2026)
+### Current Status (November 2025)
+
+**✅ Completed:**
+- Core RAG pipeline implementation
+- FastAPI backend with Claude Sonnet 4 integration
+- React frontend with TypeScript
+- Comprehensive test suite with pytest
+- Developer debugging tools
+- Complete documentation suite
+- Deployment scripts and infrastructure
+
+**🔄 In Progress:**
+- Chemistry chapter content generation and ingestion
+- Vector database population with curriculum content
+- Production deployment and testing
+- User interface refinements
+
+**⏳ Planned:**
+- Phase 3: Student Pilot (Feb-Apr 2026)
+- Phase 4: Analysis & Research (May-Jun 2026)
+- Phase 5: Final Report (Jul 2026)
 
 ---
 

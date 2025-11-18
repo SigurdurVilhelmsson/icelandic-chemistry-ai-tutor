@@ -1,8 +1,9 @@
 # CLAUDE.md - AI Assistant Guide
 
 **Project:** Icelandic Chemistry AI Tutor
-**Last Updated:** 2025-11-18
+**Last Updated:** November 18, 2025
 **Purpose:** Guide for AI assistants working on this codebase
+**Current Status:** Active Development - MVP Phase
 
 ---
 
@@ -40,9 +41,14 @@ A RAG (Retrieval-Augmented Generation) based AI teaching assistant for Icelandic
 
 ### Funding & Context
 - **Funded by:** RANNÍS Sprotasjóður (3.6M ISK, 2025-2026)
-- **Status:** MVP Phase
+- **Status:** Active Development - MVP Phase (November 2025)
 - **Schools:** Kvennaskólinn í Reykjavík, Fjölbrautaskólinn við Ármúla
 - **License:** MIT
+
+### Current Implementation Status
+- ✅ **Complete:** Backend RAG pipeline, FastAPI endpoints, React frontend, test suite, dev tools
+- 🔄 **In Progress:** Chemistry content generation and vector database population
+- ⏳ **Planned:** Production deployment, student pilot program
 
 ---
 
@@ -59,7 +65,9 @@ icelandic-chemistry-ai-tutor/
 ├── tools/                # Content generation utilities
 ├── monitoring/           # Health monitoring tools
 ├── docs/                 # Project documentation
-├── data/                 # Sample data and chapter content
+├── data/                 # Project-level data
+│   ├── chapters/         # Chemistry chapter content (to be populated)
+│   └── logs/             # Application logs
 ├── .github/              # GitHub workflows and templates
 └── [config files]        # Root-level configuration
 ```
@@ -85,7 +93,7 @@ backend/src/
 │   # - VectorStore class with persistent storage
 │   # - Collection: "icelandic_chemistry"
 │   # - Methods: add_documents(), search(), get_stats()
-│   # - Persistent path: ./data/chroma_db
+│   # - Persistent path: ./data/chroma_db (created on first use)
 │
 ├── llm_client.py              # Claude API client
 │   # - Model: claude-sonnet-4-20250514
@@ -413,9 +421,9 @@ flake8 src/ tests/
 mypy src/
 isort src/ tests/
 
-# Ingest content
-python -m src.ingest --file data/chapters/chapter1.md
-python -m src.batch_ingest --data-dir data/chapters/
+# Ingest content (after generating with tools/content_generator.py)
+python -m src.ingest --file ../data/chapters/chapter1.md
+python -m src.batch_ingest --data-dir ../data/chapters/
 
 # Inspect database
 python -m src.inspect_db
@@ -1152,14 +1160,16 @@ for result in results:
 
 ### Adding New Content
 
+**Important:** As of November 2025, the `/data/chapters/` directory exists but is empty (contains only `.gitkeep`). Chemistry chapter content needs to be generated using the tools in `/tools/` before the RAG system can answer questions.
+
 **Single File Ingestion:**
 ```bash
-# Ingest a single chapter file
-python -m src.ingest --file data/chapters/chapter_08_sura_og_basar.md
+# Ingest a single chapter file (after generating content)
+python -m src.ingest --file ../data/chapters/chapter_08_sura_og_basar.md
 
 # With custom parameters
 python -m src.ingest \
-  --file data/chapters/chapter_08.md \
+  --file ../data/chapters/chapter_08.md \
   --db-path ./data/chroma_db \
   --reset  # WARNING: Clears existing database
 ```
@@ -1167,7 +1177,7 @@ python -m src.ingest \
 **Batch Ingestion:**
 ```bash
 # Ingest all files in a directory
-python -m src.batch_ingest --data-dir data/chapters/
+python -m src.batch_ingest --data-dir ../data/chapters/
 
 # Features:
 # - Progress bars
@@ -1180,7 +1190,7 @@ python -m src.batch_ingest --data-dir data/chapters/
 **Validate Content First:**
 ```bash
 # Validate before ingesting
-python -m src.chapter_validator data/chapters/new_chapter.md
+python -m src.chapter_validator ../data/chapters/new_chapter.md
 
 # Checks:
 # - UTF-8 encoding
@@ -1190,18 +1200,21 @@ python -m src.chapter_validator data/chapters/new_chapter.md
 # - Markdown formatting
 ```
 
-**Generate New Content (for testing):**
+**Generate New Content:**
 ```bash
-# Use the content generator tool to create test content
+# Use the content generator tool to create curriculum content
 cd tools
 python content_generator.py
 
 # Features:
 # - AI-powered content generation in Icelandic
 # - Creates properly structured chapters
-# - Follows curriculum templates
+# - Follows curriculum templates (see tools/templates/)
 # - Validates language quality
 # - See tools/README.md for detailed usage
+
+# Note: This is a REQUIRED step before the system can answer questions
+# Generated content is saved to ../data/chapters/
 ```
 
 ### Updating Dependencies
@@ -1695,12 +1708,17 @@ ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000,https://yourdomain.c
 
 **3. "ChromaDB: No such collection"**
 ```bash
-# Solution: Ingest content first
-cd backend
-python -m src.batch_ingest --data-dir data/chapters/
+# Solution: Generate and ingest content first
+# Step 1: Generate chemistry content
+cd tools
+python content_generator.py
+
+# Step 2: Ingest generated content
+cd ../backend
+python -m src.batch_ingest --data-dir ../data/chapters/
 
 # Or check if database exists
-ls -la data/chroma_db/
+ls -la ./data/chroma_db/
 ```
 
 **4. "Anthropic API key not found"**
@@ -1816,8 +1834,16 @@ from conftest import fixture_name
 
 **1. "Database is empty after ingestion"**
 ```bash
+# First, ensure content exists in data/chapters/
+ls -la ../data/chapters/
+
+# If empty, generate content first
+cd ../tools
+python content_generator.py
+cd ../backend
+
 # Check ingestion logs
-python -m src.batch_ingest --data-dir data/chapters/ 2>&1 | tee ingest.log
+python -m src.batch_ingest --data-dir ../data/chapters/ 2>&1 | tee ingest.log
 
 # Verify files were processed
 grep "Processing" ingest.log
@@ -1825,8 +1851,8 @@ grep "Processing" ingest.log
 # Check database
 python -m src.inspect_db
 
-# Try single file first
-python -m src.ingest --file data/chapters/chapter_01.md
+# Try single file first (if you have a chapter file)
+python -m src.ingest --file ../data/chapters/chapter_01.md
 ```
 
 **2. "Search returns no results"**
