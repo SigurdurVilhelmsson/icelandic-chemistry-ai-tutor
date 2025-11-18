@@ -93,13 +93,50 @@ rag_pipeline: Optional[RAGPipeline] = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize RAG pipeline on startup"""
+    """Initialize RAG pipeline and validate configuration on startup"""
     global rag_pipeline
+
+    # Validate API keys first
+    logger.info("Validating API keys...")
+    api_key_errors = []
+
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+    if not anthropic_key:
+        api_key_errors.append("ANTHROPIC_API_KEY not set")
+    elif not anthropic_key.startswith("sk-ant-"):
+        api_key_errors.append("ANTHROPIC_API_KEY appears invalid (should start with 'sk-ant-')")
+
+    openai_key = os.getenv("OPENAI_API_KEY")
+    if not openai_key:
+        api_key_errors.append("OPENAI_API_KEY not set")
+    elif not openai_key.startswith("sk-"):
+        api_key_errors.append("OPENAI_API_KEY appears invalid (should start with 'sk-')")
+
+    if api_key_errors:
+        for error in api_key_errors:
+            logger.critical(f"✗ Configuration error: {error}")
+        logger.critical("Server will start but /ask endpoint will not function!")
+        logger.critical("Please set environment variables and restart the server")
+        return  # Don't initialize RAG pipeline with invalid keys
+
+    logger.info("✓ API keys validated")
+
+    # Initialize RAG pipeline
     try:
         logger.info("Initializing RAG pipeline...")
         chroma_db_path = os.getenv("CHROMA_DB_PATH", "./data/chroma_db")
         rag_pipeline = RAGPipeline(chroma_db_path=chroma_db_path)
         logger.info("✓ RAG pipeline initialized successfully")
+
+        # Perform health check
+        logger.info("Running startup health check...")
+        validation = rag_pipeline.validate_setup()
+
+        if not all(validation.values()):
+            logger.warning(f"⚠ Some validation checks failed: {validation}")
+        else:
+            logger.info("✓ All startup checks passed")
+
     except Exception as e:
         logger.error(f"✗ Failed to initialize RAG pipeline: {e}")
         logger.warning("Server will start but /ask endpoint may not function correctly")
@@ -155,7 +192,9 @@ async def ask_question(request: QuestionRequest, req: Request):
         )
 
     try:
-        logger.info(f"Received question: {request.question[:100]}...")
+        # Extract request ID from header for tracing
+        request_id = req.headers.get("X-Request-ID", f"backend_{datetime.now().timestamp()}")
+        logger.info(f"[{request_id}] Received question: {request.question[:100]}...")
 
         # Use RAG pipeline to generate answer
         result = rag_pipeline.ask(question=request.question)
@@ -178,16 +217,16 @@ async def ask_question(request: QuestionRequest, req: Request):
             session_id=request.session_id
         )
 
-        logger.info(f"Answer generated successfully with {len(citations)} citations")
+        logger.info(f"[{request_id}] Answer generated successfully with {len(citations)} citations")
         return response
 
     except ValueError as e:
         # Client error (e.g., empty question)
-        logger.warning(f"Validation error: {str(e)}")
+        logger.warning(f"[{request_id}] Validation error: {str(e)}")
         raise HTTPException(status_code=400, detail=str(e))
 
     except Exception as e:
-        logger.error(f"Error processing question: {str(e)}", exc_info=True)
+        logger.error(f"[{request_id}] Error processing question: {str(e)}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail="Villa kom upp við úrvinnslu spurningar. Vinsamlegast reyndu aftur."
