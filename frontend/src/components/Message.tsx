@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { format } from 'date-fns';
+import DOMPurify from 'dompurify';
 import { Message as MessageType } from '../types';
 import { CitationCard } from './CitationCard';
 
@@ -70,7 +71,12 @@ export function Message({ message }: MessageProps) {
         <div className="bg-gray-100 text-gray-900 rounded-lg px-4 py-3 shadow-sm">
           <div
             className="prose prose-sm max-w-none whitespace-pre-wrap break-words"
-            dangerouslySetInnerHTML={{ __html: formatContent(message.content) }}
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(formatContent(message.content), {
+                ALLOWED_TAGS: ['p', 'strong', 'em', 'li', 'ul', 'ol', 'br'],
+                ALLOWED_ATTR: []
+              })
+            }}
           />
 
           {message.citations && message.citations.length > 0 && (
