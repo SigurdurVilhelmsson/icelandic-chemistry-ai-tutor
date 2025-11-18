@@ -2,7 +2,7 @@
  * Chat Context for managing conversation state
  */
 
-import React, { createContext, useContext, useReducer, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import { Message, ChatState, ToastMessage } from '../types';
 import {
   generateSessionId,
@@ -122,6 +122,9 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     toasts: []
   });
 
+  // Track active toast timeouts for cleanup
+  const toastTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
   // Load conversation from localStorage on mount
   useEffect(() => {
     const currentSessionId = getCurrentSessionId();
@@ -143,6 +146,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.messages, state.sessionId]);
 
+  // Cleanup all toast timeouts on unmount
+  useEffect(() => {
+    return () => {
+      toastTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      toastTimeoutsRef.current.clear();
+    };
+  }, []);
+
   const showToast = useCallback((message: string, type: ToastMessage['type']) => {
     const id = `toast_${Date.now()}_${Math.random()}`;
     dispatch({
@@ -151,12 +162,22 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     });
 
     // Auto-dismiss after 5 seconds
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       dispatch({ type: 'REMOVE_TOAST', payload: id });
+      toastTimeoutsRef.current.delete(id);
     }, 5000);
+
+    // Store timeout ID for cleanup
+    toastTimeoutsRef.current.set(id, timeoutId);
   }, []);
 
   const dismissToast = useCallback((id: string) => {
+    // Clear the timeout if it exists
+    const timeoutId = toastTimeoutsRef.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      toastTimeoutsRef.current.delete(id);
+    }
     dispatch({ type: 'REMOVE_TOAST', payload: id });
   }, []);
 
