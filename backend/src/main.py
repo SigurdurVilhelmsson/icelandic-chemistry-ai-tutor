@@ -3,9 +3,12 @@ Chemistry AI Tutor - FastAPI Backend
 Main application entry point with CORS configuration
 """
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 import os
 import logging
 from typing import Optional, List, Dict, Any
@@ -27,6 +30,9 @@ except ImportError:
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from rag_pipeline import RAGPipeline
 
+# Initialize rate limiter
+limiter = Limiter(key_func=get_remote_address)
+
 # Create FastAPI app
 app = FastAPI(
     title="Chemistry AI Tutor API",
@@ -35,6 +41,10 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc"
 )
+
+# Add rate limiter to app state
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS Configuration
 allowed_origins = os.getenv(
@@ -125,7 +135,8 @@ async def health_check():
 
 # Main question endpoint
 @app.post("/ask", response_model=QuestionResponse)
-async def ask_question(request: QuestionRequest):
+@limiter.limit("30/minute")
+async def ask_question(request: QuestionRequest, req: Request):
     """
     Process a chemistry question and return an AI-generated answer
 

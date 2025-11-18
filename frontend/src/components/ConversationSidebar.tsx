@@ -128,7 +128,7 @@ export function ConversationSidebar({
                             : conv.firstQuestion}
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
-                          {format(conv.lastUpdated, 'dd.MM.yyyy HH:mm')}
+                          {format(conv.lastUpdated, 'dd.MM.yyyy HH:mm', { locale: is })}
                         </div>
                         <div className="text-xs text-gray-400 mt-1">
                           {conv.messageCount} skilaboð
