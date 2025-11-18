@@ -56,8 +56,10 @@ icelandic-chemistry-ai-tutor/
 ├── nginx/                # Web server configuration
 ├── scripts/              # Deployment and utility scripts
 ├── dev-tools/            # Developer debugging tools
+├── tools/                # Content generation utilities
 ├── monitoring/           # Health monitoring tools
 ├── docs/                 # Project documentation
+├── data/                 # Sample data and chapter content
 ├── .github/              # GitHub workflows and templates
 └── [config files]        # Root-level configuration
 ```
@@ -265,11 +267,36 @@ dev-tools/
 │       # - Bottleneck identification
 │       # - Export profiling data
 │
+├── frontend/                  # Frontend debugging tools
+│   ├── api_logger.tsx         # API request/response logger
+│   │   # - Log all API calls with timing
+│   │   # - Request/response inspection
+│   │
+│   └── dev_panel.tsx          # Developer debug panel
+│       # - State inspection
+│       # - Feature toggles
+│
 └── scripts/                   # Helper scripts
     └── dev_server.sh          # Development server launcher
         # - Environment setup
         # - Port checking
         # - Optional DB inspector launch
+```
+
+### Content Generation Tools (`/tools/`)
+
+```
+tools/
+├── README.md                  # Documentation for content tools
+├── content_generator.py       # AI-powered content generator
+│   # - Generates Icelandic chemistry content
+│   # - Uses Claude API with specialized prompts
+│   # - Creates chapters, sections, examples
+│   # - Validates Icelandic language quality
+│
+└── templates/                 # Content templates
+    ├── chapter_template.md    # Template for chapter structure
+    └── section_template.md    # Template for section structure
 ```
 
 ### Deployment Scripts (`/scripts/`)
@@ -291,15 +318,27 @@ scripts/
 └── quick_test_setup.sh        # Quick test environment setup
 ```
 
-### Documentation (`/docs/`)
+### Documentation
 
-Comprehensive project documentation:
+**Root-Level Documentation:**
+- `README.md` - Project overview and quick start guide
+- `CLAUDE.md` - **This file** - Comprehensive guide for AI assistants
+- `API_INTEGRATION.md` - External API integration guide (Claude, OpenAI)
+- `DEPLOYMENT.md` - Production deployment instructions
+- `ENVIRONMENT_VARIABLES.md` - Environment configuration reference
+- `SECURITY.md` - Security practices and guidelines
+- `TESTING.md` - Testing strategies and best practices
+- `TROUBLESHOOTING.md` - Common issues and solutions
+- `LICENSE` - MIT License
+
+**Detailed Documentation (`/docs/`):**
 - `ARCHITECTURE.md` - System architecture and design decisions
 - `API_REFERENCE.md` - API endpoint documentation
 - `DEVELOPMENT.md` - Development guide and local setup
 - `CONTRIBUTING.md` - Contribution guidelines
 - `USER_GUIDE_IS.md` - Icelandic user guide for students
 - `TEACHER_GUIDE_IS.md` - Icelandic teacher guide
+- `LICENSE.md` - License information
 
 ---
 
@@ -1151,6 +1190,20 @@ python -m src.chapter_validator data/chapters/new_chapter.md
 # - Markdown formatting
 ```
 
+**Generate New Content (for testing):**
+```bash
+# Use the content generator tool to create test content
+cd tools
+python content_generator.py
+
+# Features:
+# - AI-powered content generation in Icelandic
+# - Creates properly structured chapters
+# - Follows curriculum templates
+# - Validates language quality
+# - See tools/README.md for detailed usage
+```
+
 ### Updating Dependencies
 
 **Backend Dependencies:**
@@ -1870,10 +1923,14 @@ When encountering an issue, check in order:
 4. `README.md` - Quick start issues
 
 **Debug Tools:**
-- Backend: `dev-tools/backend/rag_debugger.py`
+- Backend RAG: `dev-tools/backend/rag_debugger.py`
 - Database: `dev-tools/backend/db_inspector.py`
 - Performance: `dev-tools/backend/performance_profiler.py`
-- Tokens: `dev-tools/backend/token_tracker.py`
+- Token Tracking: `dev-tools/backend/token_tracker.py`
+- Search Visualization: `dev-tools/backend/search_visualizer.py`
+- Frontend API Logger: `dev-tools/frontend/api_logger.tsx`
+- Frontend Dev Panel: `dev-tools/frontend/dev_panel.tsx`
+- Content Generator: `tools/content_generator.py`
 
 **Logs:**
 - Backend: Terminal output from `uvicorn`
