@@ -5,10 +5,11 @@ Main application entry point with CORS configuration
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 import os
 import logging
-from typing import Optional
+from typing import Optional, List, Dict, Any
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(
@@ -16,6 +17,15 @@ logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+# Import RAG Pipeline
+try:
+    from .rag_pipeline import RAGPipeline
+except ImportError:
+    # If running as script, use absolute import
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from rag_pipeline import RAGPipeline
 
 # Create FastAPI app
 app = FastAPI(
@@ -45,24 +55,73 @@ app.add_middleware(
 
 # Request/Response Models
 class QuestionRequest(BaseModel):
-    question: str
+    question: str = Field(..., min_length=1, max_length=2000)
+    session_id: Optional[str] = None
     language: Optional[str] = "is"  # Icelandic by default
-    context: Optional[str] = None
+    context: Optional[str] = Field(None, max_length=5000)
+
+    @validator('question')
+    def question_not_empty(cls, v):
+        if not v.strip():
+            raise ValueError('Question cannot be empty or whitespace only')
+        return v.strip()
+
+class Citation(BaseModel):
+    chapter: str
+    section: str
+    title: str
+    text_preview: Optional[str] = None
 
 class QuestionResponse(BaseModel):
     answer: str
-    confidence: Optional[float] = None
-    sources: Optional[list] = None
+    citations: List[Citation] = []
+    timestamp: str
+    session_id: Optional[str] = None
+
+# Global RAG pipeline instance
+rag_pipeline: Optional[RAGPipeline] = None
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize RAG pipeline on startup"""
+    global rag_pipeline
+    try:
+        logger.info("Initializing RAG pipeline...")
+        chroma_db_path = os.getenv("CHROMA_DB_PATH", "./data/chroma_db")
+        rag_pipeline = RAGPipeline(chroma_db_path=chroma_db_path)
+        logger.info("✓ RAG pipeline initialized successfully")
+    except Exception as e:
+        logger.error(f"✗ Failed to initialize RAG pipeline: {e}")
+        logger.warning("Server will start but /ask endpoint may not function correctly")
 
 # Health check endpoint
 @app.get("/health")
 async def health_check():
     """Health check endpoint for monitoring"""
-    return {
+    health_status = {
         "status": "healthy",
         "service": "chemistry-ai-tutor",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "timestamp": datetime.now().isoformat()
     }
+
+    # Check if RAG pipeline is initialized
+    if rag_pipeline is None:
+        health_status["status"] = "degraded"
+        health_status["warnings"] = ["RAG pipeline not initialized"]
+    else:
+        try:
+            # Get pipeline stats
+            stats = rag_pipeline.get_pipeline_stats()
+            health_status["database"] = {
+                "total_chunks": stats["database"]["total_chunks"],
+                "status": "ok" if stats["database"]["total_chunks"] > 0 else "empty"
+            }
+        except Exception as e:
+            health_status["status"] = "degraded"
+            health_status["warnings"] = [f"Database check failed: {str(e)}"]
+
+    return health_status
 
 # Main question endpoint
 @app.post("/ask", response_model=QuestionResponse)
@@ -76,22 +135,52 @@ async def ask_question(request: QuestionRequest):
     Returns:
         QuestionResponse with the answer and metadata
     """
+    # Check if RAG pipeline is initialized
+    if rag_pipeline is None:
+        logger.error("RAG pipeline not initialized")
+        raise HTTPException(
+            status_code=503,
+            detail="Service not ready. RAG pipeline not initialized."
+        )
+
     try:
         logger.info(f"Received question: {request.question[:100]}...")
 
-        # TODO: Implement actual AI processing
-        # This is a placeholder response
-        answer = f"This is a placeholder response for: {request.question}"
+        # Use RAG pipeline to generate answer
+        result = rag_pipeline.ask(question=request.question)
 
-        return QuestionResponse(
-            answer=answer,
-            confidence=0.85,
-            sources=["Chemistry Textbook Chapter 3"]
+        # Format citations for response
+        citations = []
+        for citation in result.get("citations", []):
+            citations.append(Citation(
+                chapter=citation.get("chapter", "N/A"),
+                section=citation.get("section", "N/A"),
+                title=citation.get("title", "N/A"),
+                text_preview=citation.get("text_preview", None)
+            ))
+
+        # Build response
+        response = QuestionResponse(
+            answer=result["answer"],
+            citations=citations,
+            timestamp=result["metadata"]["timestamp"],
+            session_id=request.session_id
         )
 
+        logger.info(f"Answer generated successfully with {len(citations)} citations")
+        return response
+
+    except ValueError as e:
+        # Client error (e.g., empty question)
+        logger.warning(f"Validation error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
+
     except Exception as e:
-        logger.error(f"Error processing question: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        logger.error(f"Error processing question: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail="Villa kom upp við úrvinnslu spurningar. Vinsamlegast reyndu aftur."
+        )
 
 # Root endpoint
 @app.get("/")
