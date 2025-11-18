@@ -39,9 +39,14 @@ export function ConversationSidebar({
   }, [isOpen]);
 
   const handleDelete = (sessionId: string) => {
-    deleteConversationStorage(sessionId);
-    loadConversations();
-    setConfirmDelete(null);
+    const success = deleteConversationStorage(sessionId);
+    if (success) {
+      loadConversations();
+      setConfirmDelete(null);
+    } else {
+      // Show error - could add toast notification here if context available
+      console.error('Failed to delete conversation');
+    }
   };
 
   const handleLoad = (sessionId: string) => {

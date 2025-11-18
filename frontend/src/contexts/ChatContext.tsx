@@ -142,9 +142,16 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   // Save conversation whenever messages change
   useEffect(() => {
     if (state.messages.length > 0) {
-      saveConversation(state.sessionId, state.messages);
+      const success = saveConversation(state.sessionId, state.messages);
+      if (!success) {
+        // Only show error once per session using a flag
+        if (!(window as any).__storage_error_shown) {
+          showToast('Viðvörun: Ekki tókst að vista samtal. Minni gæti verið fullt.', 'error');
+          (window as any).__storage_error_shown = true;
+        }
+      }
     }
-  }, [state.messages, state.sessionId]);
+  }, [state.messages, state.sessionId, showToast]);
 
   // Cleanup all toast timeouts on unmount
   useEffect(() => {

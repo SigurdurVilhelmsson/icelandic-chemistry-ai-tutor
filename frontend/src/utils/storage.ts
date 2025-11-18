@@ -17,8 +17,9 @@ export function generateSessionId(): string {
 
 /**
  * Save a conversation to localStorage
+ * @returns true if save was successful, false otherwise
  */
-export function saveConversation(sessionId: string, messages: Message[]): void {
+export function saveConversation(sessionId: string, messages: Message[]): boolean {
   try {
     const conversations = getAllConversations();
 
@@ -34,8 +35,47 @@ export function saveConversation(sessionId: string, messages: Message[]): void {
     conversations[sessionId] = storedConversation;
     localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
     localStorage.setItem(CURRENT_SESSION_KEY, sessionId);
+    return true;
   } catch (error) {
     console.error('Error saving conversation:', error);
+
+    // Check for quota exceeded error
+    if (error instanceof DOMException &&
+        (error.name === 'QuotaExceededError' || error.code === 22)) {
+      console.error('localStorage quota exceeded - clearing old conversations');
+      // Try to clear some space by removing oldest conversations
+      try {
+        const conversations = getAllConversations();
+        const conversationList = Object.entries(conversations)
+          .sort(([, a], [, b]) =>
+            new Date(a.lastUpdated).getTime() - new Date(b.lastUpdated).getTime()
+          );
+
+        // Remove oldest 25% of conversations
+        const toRemove = Math.max(1, Math.floor(conversationList.length * 0.25));
+        for (let i = 0; i < toRemove; i++) {
+          delete conversations[conversationList[i][0]];
+        }
+
+        localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
+
+        // Try saving again
+        conversations[sessionId] = {
+          sessionId,
+          messages: messages.map(msg => ({
+            ...msg,
+            timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp
+          })) as any,
+          lastUpdated: new Date().toISOString()
+        };
+        localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
+        return true;
+      } catch (retryError) {
+        console.error('Failed to save even after clearing space:', retryError);
+        return false;
+      }
+    }
+    return false;
   }
 }
 
@@ -97,8 +137,9 @@ export function listConversations(): ConversationSummary[] {
 
 /**
  * Delete a conversation from localStorage
+ * @returns true if delete was successful, false otherwise
  */
-export function deleteConversation(sessionId: string): void {
+export function deleteConversation(sessionId: string): boolean {
   try {
     const conversations = getAllConversations();
     delete conversations[sessionId];
@@ -108,26 +149,52 @@ export function deleteConversation(sessionId: string): void {
     if (localStorage.getItem(CURRENT_SESSION_KEY) === sessionId) {
       localStorage.removeItem(CURRENT_SESSION_KEY);
     }
+    return true;
   } catch (error) {
     console.error('Error deleting conversation:', error);
+    return false;
   }
 }
 
 /**
  * Get the current session ID
+ * @returns session ID or null if not found or error occurred
  */
 export function getCurrentSessionId(): string | null {
-  return localStorage.getItem(CURRENT_SESSION_KEY);
+  try {
+    return localStorage.getItem(CURRENT_SESSION_KEY);
+  } catch (error) {
+    console.error('Error getting current session ID:', error);
+    return null;
+  }
 }
 
 /**
  * Clear all conversations
+ * @returns true if clear was successful, false otherwise
  */
-export function clearAllConversations(): void {
+export function clearAllConversations(): boolean {
   try {
     localStorage.removeItem(CONVERSATIONS_KEY);
     localStorage.removeItem(CURRENT_SESSION_KEY);
+    return true;
   } catch (error) {
     console.error('Error clearing conversations:', error);
+    return false;
+  }
+}
+
+/**
+ * Check if localStorage is available and working
+ * @returns true if localStorage is available, false otherwise
+ */
+export function isLocalStorageAvailable(): boolean {
+  try {
+    const testKey = '__localStorage_test__';
+    localStorage.setItem(testKey, 'test');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (error) {
+    return false;
   }
 }
