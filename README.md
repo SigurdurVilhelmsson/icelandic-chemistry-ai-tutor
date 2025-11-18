@@ -58,7 +58,7 @@ This project delivers a RAG (Retrieval-Augmented Generation) based AI teaching a
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/YOUR_USERNAME/icelandic-chemistry-ai-tutor.git
+git clone https://github.com/SigurdurVilhelmsson/icelandic-chemistry-ai-tutor.git
 cd icelandic-chemistry-ai-tutor
 
 # 2. Run setup
@@ -120,15 +120,34 @@ icelandic-chemistry-ai-tutor/
 │   ├── backup.sh           # Database backup
 │   └── ...
 │
+├── dev-tools/              # Developer debugging tools
+│   ├── backend/            # RAG debugger, DB inspector, etc.
+│   ├── frontend/           # API logger, dev panel
+│   └── scripts/            # Helper scripts
+│
+├── tools/                  # Content generation utilities
+│   ├── content_generator.py # AI-powered content generator
+│   └── templates/          # Content templates
+│
 ├── monitoring/             # Health monitoring
 │   ├── health_check.py
 │   └── status.html
 │
-└── docs/                   # Documentation
-    ├── ARCHITECTURE.md
-    ├── DEVELOPMENT.md
-    ├── DEPLOYMENT.md
-    └── ...
+├── docs/                   # Project documentation
+│   ├── ARCHITECTURE.md
+│   ├── DEVELOPMENT.md
+│   ├── DEPLOYMENT.md
+│   └── ...
+│
+└── [Root Documentation]    # Key reference files
+    ├── README.md           # This file
+    ├── CLAUDE.md           # AI assistant guide
+    ├── API_INTEGRATION.md  # External API integration
+    ├── DEPLOYMENT.md       # Production deployment
+    ├── ENVIRONMENT_VARIABLES.md
+    ├── SECURITY.md         # Security practices
+    ├── TESTING.md          # Testing strategies
+    └── TROUBLESHOOTING.md  # Common issues
 ```
 
 ---
@@ -161,6 +180,18 @@ icelandic-chemistry-ai-tutor/
 ---
 
 ## 📚 Documentation
+
+### Core Documentation
+
+- **[CLAUDE.md](CLAUDE.md)** - Comprehensive guide for AI assistants working on this project
+- **[API Integration](API_INTEGRATION.md)** - External API integration guide (Claude, OpenAI)
+- **[Deployment](DEPLOYMENT.md)** - Production deployment instructions
+- **[Environment Variables](ENVIRONMENT_VARIABLES.md)** - Environment configuration reference
+- **[Security](SECURITY.md)** - Security practices and guidelines
+- **[Testing](TESTING.md)** - Testing strategies and best practices
+- **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Detailed Guides
 
 - [Architecture](docs/ARCHITECTURE.md) - Detailed system design
 - [Development Guide](docs/DEVELOPMENT.md) - Local setup and development
@@ -206,6 +237,24 @@ pytest tests/
 cd frontend
 npm test
 ```
+
+### Developer Tools
+
+The project includes helpful debugging and development tools:
+
+```bash
+# Backend debugging tools
+python dev-tools/backend/rag_debugger.py          # Interactive RAG pipeline debugger
+python dev-tools/backend/db_inspector.py          # Web UI for database inspection (port 5001)
+python dev-tools/backend/search_visualizer.py     # Visual similarity search analysis
+python dev-tools/backend/token_tracker.py         # API cost monitoring
+python dev-tools/backend/performance_profiler.py  # Pipeline performance analysis
+
+# Content generation tools
+python tools/content_generator.py                 # AI-powered content generator
+```
+
+See `dev-tools/README.md` and `tools/README.md` for detailed usage.
 
 ---
 
