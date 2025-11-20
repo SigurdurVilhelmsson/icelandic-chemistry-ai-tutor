@@ -1,9 +1,31 @@
 # Deployment Guide - Linode Single Server
 
+## kvenno.app Platform Context
+
+**This app is deployed as part of the kvenno.app platform.** See [Kvenno_structure.md](Kvenno_structure.md) for the complete platform structure.
+
+### Deployment Paths
+
+This AI Chemistry Tutor is deployed to multiple paths on kvenno.app:
+- `/1-ar/ai-tutor/` - 1st year chemistry
+- `/2-ar/ai-tutor/` - 2nd year chemistry
+- `/3-ar/ai-tutor/` - 3rd year chemistry
+
+### Multi-Path Deployment Strategy
+
+The same React build is served from all three paths:
+- **Nginx configuration**: Routes all `/*/ai-tutor/` paths to the same frontend build
+- **React Router**: Uses dynamic `basename` based on current path
+- **Backend**: Single shared instance serves all year levels
+
+See Section 9 of [Kvenno_structure.md](Kvenno_structure.md) for detailed deployment configuration.
+
+---
+
 ## Architecture Overview
 
-Everything runs on one Linode server:
-- **Nginx (Port 80/443)**: Serves frontend + proxies API requests to backend
+Everything runs on one Linode server (kvenno.app):
+- **Nginx (Port 80/443)**: Serves frontend at multiple paths + proxies API requests to backend
 - **FastAPI (Port 8000)**: Backend (Docker container, only accessible from localhost)
 - **Chroma DB**: Persistent volume in Docker
 
@@ -51,7 +73,8 @@ ANTHROPIC_API_KEY=your_anthropic_key_here
 OPENAI_API_KEY=your_openai_key_here
 CHROMA_DB_PATH=/app/data/chroma_db
 LOG_LEVEL=INFO
-ALLOWED_ORIGINS=https://yourdomain.com
+ALLOWED_ORIGINS=https://kvenno.app
+# For local development, also add: http://localhost:5173
 ```
 
 Frontend configuration:
@@ -61,7 +84,8 @@ nano frontend/.env
 
 Add:
 ```
-VITE_API_ENDPOINT=https://yourdomain.com
+VITE_API_ENDPOINT=https://kvenno.app
+# Or for testing: http://localhost:8000
 ```
 
 ### 3. Setup Nginx

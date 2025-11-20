@@ -25,6 +25,8 @@
 ### What This Is
 A RAG (Retrieval-Augmented Generation) based AI teaching assistant for Icelandic high school chemistry students. It provides 24/7 personalized learning support entirely in Icelandic, using curriculum-aligned content.
 
+**This is a component app of the kvenno.app platform.** See [Kvenno_structure.md](Kvenno_structure.md) for the complete platform structure, design system, navigation patterns, and deployment paths.
+
 ### Core Technology Stack
 - **Backend:** Python 3.11, FastAPI, LangChain, ChromaDB
 - **LLM:** Claude Sonnet 4 (`claude-sonnet-4-20250514`)

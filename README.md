@@ -6,32 +6,72 @@
 
 AI-powered chemistry tutor for Icelandic high school students, providing 24/7 personalized learning support in Icelandic.
 
+**Part of the [kvenno.app](https://kvenno.app) platform** - Kvennaskólinn í Reykjavík's unified chemistry education ecosystem.
+
 ---
 
 ## 🎯 Project Overview
 
-This project delivers a RAG (Retrieval-Augmented Generation) based AI teaching assistant that:
+This is the **AI Chemistry Tutor** component of the kvenno.app platform, a unified educational site serving Kvennaskólinn í Reykjavík students.
+
+### What This App Does
+
+A RAG (Retrieval-Augmented Generation) based AI teaching assistant that:
 - Answers chemistry questions in Icelandic
 - Provides accurate citations from curriculum-aligned content
 - Available 24/7 for all students
-- Runs entirely on open-source technology
+- Integrated into the year-specific learning paths on kvenno.app
+
+### Deployment Context
+
+This app is deployed to multiple paths on kvenno.app:
+- **1st Year:** `/1-ar/ai-tutor/`
+- **2nd Year:** `/2-ar/ai-tutor/`
+- **3rd Year:** `/3-ar/ai-tutor/`
+
+It shares the kvenno.app design system (primary color: `#f36b22`), header, and navigation patterns. See [Kvenno_structure.md](Kvenno_structure.md) for complete site structure details.
+
+### Funding & Status
 
 **Funded by:** RANNÍS Sprotasjóður 2025-2026
 **Grant:** 3.6M ISK over 12 months
 **Status:** Active Development - MVP Phase (November 2025)
+**Schools:** Kvennaskólinn í Reykjavík, Fjölbrautaskólinn við Ármúla
 
 ---
 
 ## 🏗️ Architecture
 
+### kvenno.app Integration
+
+This app is one component in the kvenno.app platform ecosystem:
+
+```
+kvenno.app/
+├── /                      (Landing page)
+├── /1-ar/                 (1st year hub)
+│   └── /1-ar/ai-tutor/    ← This app (deployed here)
+├── /2-ar/                 (2nd year hub)
+│   └── /2-ar/ai-tutor/    ← This app (deployed here)
+├── /3-ar/                 (3rd year hub)
+│   └── /3-ar/ai-tutor/    ← This app (deployed here)
+└── [other year/subject hubs...]
+```
+
+See [Kvenno_structure.md](Kvenno_structure.md) for complete platform structure.
+
+### Technical Architecture
+
 ```
 ┌─────────────────────────────────────────────────┐
 │           Linode Server (Ubuntu 24.04)          │
+│                 kvenno.app                       │
 │                                                  │
 │  ┌──────────────────────────────────────────┐   │
 │  │  Nginx (Port 80/443)                      │   │
-│  │  - Serves React frontend                  │   │
+│  │  - Serves React frontend at /*/ai-tutor/ │   │
 │  │  - Proxies /ask to backend                │   │
+│  │  - Routes to other kvenno.app apps        │   │
 │  └────────────┬─────────────────────────────┘   │
 │               │                                  │
 │  ┌────────────▼─────────────────────────────┐   │
@@ -155,6 +195,7 @@ icelandic-chemistry-ai-tutor/
 │
 └── [Root Documentation]    # Key reference files
     ├── README.md           # This file
+    ├── Kvenno_structure.md # kvenno.app platform structure (IMPORTANT)
     ├── CLAUDE.md           # AI assistant guide
     ├── API_INTEGRATION.md  # External API integration
     ├── DEPLOYMENT.md       # Production deployment
@@ -194,6 +235,10 @@ icelandic-chemistry-ai-tutor/
 ---
 
 ## 📚 Documentation
+
+### Platform Integration
+
+- **[Kvenno_structure.md](Kvenno_structure.md)** - **START HERE** - Complete kvenno.app platform structure, design system, and navigation patterns
 
 ### Core Documentation
 
