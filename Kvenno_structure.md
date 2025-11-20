@@ -190,10 +190,15 @@ Each app (Lab Reports, AI Tutor, etc.) must include:
 
 > **NOTE**: Update this section for each repo
 
-- **Repo Name**: [e.g., lab-reports-app]
-- **Deployed To**: [e.g., /1-ar/lab-reports/]
-- **Purpose**: [Brief description of what this app does]
-- **Current Status**: [In development / Deployed / Planning]
+- **Repo Name**: `icelandic-chemistry-ai-tutor` (also known as `ai-tutor-app`)
+- **Deployed To**:
+  - `/1-ar/ai-tutor/` (1st year chemistry)
+  - `/2-ar/ai-tutor/` (2nd year chemistry)
+  - `/3-ar/ai-tutor/` (3rd year chemistry)
+- **Purpose**: RAG-based AI teaching assistant that answers chemistry questions in Icelandic with citations from curriculum-aligned content. Provides 24/7 personalized learning support using Claude Sonnet 4 and OpenAI embeddings with ChromaDB vector search.
+- **Current Status**: Active Development - MVP Phase (November 2025)
+- **Technology**: React + TypeScript frontend, Python FastAPI backend, LangChain RAG pipeline
+- **Funding**: RANNÍS Sprotasjóður 2025-2026 (3.6M ISK grant)
 
 ## 9. Deployment Notes
 
