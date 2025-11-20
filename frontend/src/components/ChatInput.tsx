@@ -53,7 +53,7 @@ export function ChatInput({
 
   return (
     <div className="border-t border-gray-300 bg-white p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto" style={{ maxWidth: '1200px' }}>
         <div className="relative">
           <textarea
             ref={textareaRef}
@@ -63,16 +63,31 @@ export function ChatInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className={`w-full resize-none rounded-lg border ${
+            className={`w-full resize-none border ${
               isOverLimit ? 'border-red-500' : 'border-gray-300'
-            } px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed`}
+            } px-4 py-3 pr-12 focus:outline-none focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed`}
+            style={{ borderRadius: '8px' }}
             aria-label="Skilaboð"
           />
 
           <button
             onClick={handleSubmit}
             disabled={disabled || !message.trim() || isOverLimit}
-            className="absolute right-2 bottom-2 p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            className="absolute right-2 bottom-2 p-2 text-white disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            style={{
+              borderRadius: '8px',
+              backgroundColor: disabled || !message.trim() || isOverLimit ? '#d1d5db' : '#f36b22'
+            }}
+            onMouseEnter={(e) => {
+              if (!disabled && message.trim() && !isOverLimit) {
+                e.currentTarget.style.backgroundColor = '#d85a1a';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!disabled && message.trim() && !isOverLimit) {
+                e.currentTarget.style.backgroundColor = '#f36b22';
+              }
+            }}
             aria-label="Senda skilaboð"
           >
             <Send className="w-4 h-4" />
