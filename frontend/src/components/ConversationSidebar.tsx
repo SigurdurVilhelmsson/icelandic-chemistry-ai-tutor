@@ -95,7 +95,17 @@ export function ConversationSidebar({
           <div className="p-4 border-b border-gray-200">
             <button
               onClick={handleNew}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-white transition-colors"
+              style={{
+                backgroundColor: '#f36b22',
+                borderRadius: '8px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#d85a1a';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#f36b22';
+              }}
               aria-label="Nýtt samtal"
             >
               <Plus className="w-4 h-4" />
@@ -114,11 +124,16 @@ export function ConversationSidebar({
               conversations.map((conv) => (
                 <div
                   key={conv.sessionId}
-                  className={`border rounded-lg p-3 hover:bg-gray-50 transition-colors ${
+                  className={`border p-3 hover:bg-gray-50 transition-colors ${
                     conv.sessionId === currentSessionId
-                      ? 'border-blue-500 bg-blue-50'
+                      ? 'bg-orange-50'
                       : 'border-gray-300'
                   }`}
+                  style={{
+                    borderRadius: '8px',
+                    borderColor: conv.sessionId === currentSessionId ? '#f36b22' : '#d1d5db',
+                    borderWidth: '2px'
+                  }}
                 >
                   <button
                     onClick={() => handleLoad(conv.sessionId)}
