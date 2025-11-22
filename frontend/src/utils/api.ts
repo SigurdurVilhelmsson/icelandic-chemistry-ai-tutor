@@ -68,7 +68,7 @@ export async function sendMessage(
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     try {
       const response = await fetchWithTimeout(
-        `${API_ENDPOINT}/api/chat`,
+        `${API_ENDPOINT}/ask`,
         {
           method: 'POST',
           headers: {

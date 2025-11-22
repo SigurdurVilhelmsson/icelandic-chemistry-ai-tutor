@@ -410,11 +410,33 @@ Visit: `https://yourdomain.com/status`
 
 ## 🔐 Security
 
-- All API keys stored in `.env` (never committed)
+### ⚠️ CRITICAL: API Key Security
+
+**NEVER expose API keys in frontend code!**
+
+This project follows strict security requirements from the kvenno.app platform:
+
+- ✅ **API keys ONLY in `backend/.env`** - Anthropic and OpenAI keys must never be in frontend environment variables
+- ✅ **NO `VITE_` prefix for secrets** - `VITE_` variables are embedded in client JavaScript and publicly accessible
+- ✅ **Backend as proxy** - Frontend calls backend at `/ask`, backend calls Claude/OpenAI APIs with secure keys
+- ✅ **Nginx security** - Backend only accessible via nginx proxy, not directly from internet
+
+**Why this matters:**
+- Frontend `VITE_` variables are baked into JavaScript bundles during build
+- Anyone can open browser DevTools and extract these values
+- Exposed API keys can be stolen and rack up huge bills
+- This violates API provider terms of service
+
+See [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md) Section 3 for complete backend security architecture.
+
+### General Security
+
+- All API keys stored in `backend/.env` (never committed to git)
 - HTTPS only (enforced by nginx)
-- CORS properly configured
-- Rate limiting enabled
+- CORS properly configured - only kvenno.app origins allowed
+- Rate limiting enabled on API endpoints
 - Regular security updates
+- Secure file permissions on `.env` files (chmod 600)
 
 ---
 
