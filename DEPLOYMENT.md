@@ -2,7 +2,7 @@
 
 ## kvenno.app Platform Context
 
-**This app is deployed as part of the kvenno.app platform.** See [Kvenno_structure.md](Kvenno_structure.md) for the complete platform structure.
+**This app is deployed as part of the kvenno.app platform.** See [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md) for the complete platform structure.
 
 ### Deployment Paths
 
@@ -27,7 +27,22 @@ This AI Chemistry Tutor is deployed to multiple paths on kvenno.app:
 
 **Backend**: Single shared instance serves all year levels (runs on port 8000, accessible via nginx proxy)
 
-See Section 9 of [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md) for detailed deployment configuration and workflow.
+### Backend Architecture
+
+**Note on Backend Implementation:**
+- This project uses **Python FastAPI** (not Node.js as shown in KVENNO-STRUCTURE.md examples)
+- Backend runs on port 8000 in Docker container
+- Endpoints: `/ask` (chat), `/health` (health check)
+- Nginx proxies these endpoints from public domain to backend
+- API keys (Anthropic, OpenAI) stored securely in `backend/.env`
+
+The KVENNO-STRUCTURE.md shows Node.js/Express examples for reference, but the security principles are the same:
+- ✅ API keys ONLY in backend, never in frontend
+- ✅ Frontend calls backend, backend calls external APIs
+- ✅ Nginx proxies requests to backend
+- ✅ CORS configured to only allow kvenno.app origins
+
+See Section 3 of [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md) for detailed security architecture and Section 9 for deployment workflow.
 
 ---
 
@@ -94,8 +109,20 @@ nano frontend/.env
 Add:
 ```
 VITE_API_ENDPOINT=https://kvenno.app
-# Or for testing: http://localhost:8000
+# Note: Frontend will append /ask, /health, etc.
+# For local testing: http://localhost:8000
+
+VITE_BASE_PATH=/
+# Will be set by deploy-all-paths.sh for each build
+# Or manually set before building:
+# - For 1st year: /1-ar/ai-tutor/
+# - For 2nd year: /2-ar/ai-tutor/
+# - For 3rd year: /3-ar/ai-tutor/
 ```
+
+⚠️ **CRITICAL SECURITY**: Never add API keys to frontend/.env!
+- ❌ NEVER: `VITE_ANTHROPIC_API_KEY=...` (Keys must ONLY be in backend/.env)
+- ✅ CORRECT: API keys in `backend/.env`, not frontend
 
 ### 3. Setup Nginx
 

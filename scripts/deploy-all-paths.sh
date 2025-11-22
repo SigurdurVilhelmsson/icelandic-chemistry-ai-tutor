@@ -44,15 +44,18 @@ for PATH_NAME in "${PATHS[@]}"; do
   echo -e "${BLUE}Building for /${PATH_NAME}/${APP_NAME}/${NC}"
   echo -e "${BLUE}========================================${NC}"
 
-  # Set base path for this build
+  # Set environment variables for this build
   export VITE_BASE_PATH=/${PATH_NAME}/${APP_NAME}/
+  export VITE_API_ENDPOINT=https://kvenno.app
 
   # Clean dist directory
   echo -e "${YELLOW}🧹 Cleaning dist directory...${NC}"
   rm -rf dist
 
   # Build
-  echo -e "${YELLOW}🔨 Building with VITE_BASE_PATH=${VITE_BASE_PATH}${NC}"
+  echo -e "${YELLOW}🔨 Building with:${NC}"
+  echo -e "${YELLOW}  VITE_BASE_PATH=${VITE_BASE_PATH}${NC}"
+  echo -e "${YELLOW}  VITE_API_ENDPOINT=${VITE_API_ENDPOINT}${NC}"
   npm run build
 
   # Verify build succeeded
