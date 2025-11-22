@@ -13,12 +13,21 @@ This AI Chemistry Tutor is deployed to multiple paths on kvenno.app:
 
 ### Multi-Path Deployment Strategy
 
-The same React build is served from all three paths:
-- **Nginx configuration**: Routes all `/*/ai-tutor/` paths to the same frontend build
-- **React Router**: Uses dynamic `basename` based on current path
-- **Backend**: Single shared instance serves all year levels
+⚠️ **IMPORTANT**: Each deployment path requires a **separate build** with its own `VITE_BASE_PATH`:
 
-See Section 9 of [Kvenno_structure.md](Kvenno_structure.md) for detailed deployment configuration.
+- `/1-ar/ai-tutor/` - Build with `VITE_BASE_PATH=/1-ar/ai-tutor/`
+- `/2-ar/ai-tutor/` - Build with `VITE_BASE_PATH=/2-ar/ai-tutor/`
+- `/3-ar/ai-tutor/` - Build with `VITE_BASE_PATH=/3-ar/ai-tutor/`
+
+**Why?** React apps need to know their deployment path for asset loading, internal routing, and API endpoints. Building once and copying to multiple locations will break routing and asset loading.
+
+**Deployment Tools**:
+- Use `scripts/deploy-all-paths.sh` to build and deploy to all three paths automatically
+- Or manually build for each path (see Section 9 of [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md))
+
+**Backend**: Single shared instance serves all year levels (runs on port 8000, accessible via nginx proxy)
+
+See Section 9 of [KVENNO-STRUCTURE.md](KVENNO-STRUCTURE.md) for detailed deployment configuration and workflow.
 
 ---
 
@@ -116,21 +125,45 @@ sudo systemctl start certbot.timer
 
 ## Updating the Application
 
-### Quick Update (Both Frontend + Backend)
+### Multi-Path Frontend Deployment (Recommended for kvenno.app)
 
+Deploy frontend to all three year paths (requires separate builds):
+
+```bash
+cd ~/icelandic-chemistry-ai-tutor
+./scripts/deploy-all-paths.sh
+```
+
+This script will:
+1. Build the frontend three times with different `VITE_BASE_PATH` values
+2. Deploy each build to its respective path on the server
+3. Set correct permissions
+4. Reload nginx
+
+**Before running**, ensure you set these environment variables:
+```bash
+export DEPLOY_USER=siggi  # Your SSH username
+export DEPLOY_HOST=your-server  # Your server hostname or IP
+```
+
+See `scripts/deploy-all-paths.sh` for configuration options.
+
+### Legacy Single-Path Deployment (For Testing Only)
+
+⚠️ **Note**: These scripts deploy to a single path and are mainly for local testing.
+
+**Quick Update (Both Frontend + Backend)**:
 ```bash
 cd ~/icelandic-chemistry-ai-tutor
 ./scripts/deploy.sh
 ```
 
-### Backend Only
-
+**Backend Only**:
 ```bash
 ./scripts/deploy_backend.sh
 ```
 
-### Frontend Only
-
+**Frontend Only** (single build, single path):
 ```bash
 ./scripts/deploy_frontend.sh
 ```
