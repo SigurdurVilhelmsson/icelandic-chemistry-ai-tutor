@@ -384,12 +384,14 @@ Each app (Lab Reports, AI Tutor, etc.) must include:
 
 ## 8. This App's Details
 
-> **NOTE**: Update this section for each repo
-
-- **Repo Name**: [e.g., lab-reports-app]
-- **Deployed To**: [e.g., /1-ar/lab-reports/]
-- **Purpose**: [Brief description of what this app does]
-- **Current Status**: [In development / Deployed / Planning]
+- **Repo Name**: icelandic-chemistry-ai-tutor
+- **Deployed To**: `/1-ar/ai-tutor/`, `/2-ar/ai-tutor/`, `/3-ar/ai-tutor/`
+- **Purpose**: RAG-based AI teaching assistant for Icelandic high school chemistry students. Provides 24/7 personalized learning support entirely in Icelandic, using curriculum-aligned content from OpenStax Chemistry 2e (translated). Uses Claude Sonnet 4 for responses and ChromaDB for vector storage.
+- **Current Status**: Active Development - MVP Phase
+- **Technology**: React/TypeScript frontend, Python/FastAPI backend, ChromaDB vector store, Claude API
+- **Authentication**: Requires Azure AD authentication (@kvenno.is accounts)
+- **Backend**: Separate backend service (not deployed to static paths, runs on dedicated server)
+- **Builds Required**: 3 separate frontend builds (one for each year: 1st, 2nd, 3rd)
 
 ## 9. Deployment Notes
 

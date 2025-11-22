@@ -171,6 +171,7 @@ icelandic-chemistry-ai-tutor/
 ├── scripts/                # Deployment scripts
 │   ├── setup_linode.sh     # Initial setup
 │   ├── deploy.sh           # Full deployment
+│   ├── deploy-all-paths.sh # Multi-path deployment (kvenno.app)
 │   ├── backup.sh           # Database backup
 │   └── ...
 │
@@ -195,14 +196,18 @@ icelandic-chemistry-ai-tutor/
 │
 └── [Root Documentation]    # Key reference files
     ├── README.md           # This file
-    ├── Kvenno_structure.md # kvenno.app platform structure (IMPORTANT)
+    ├── KVENNO-STRUCTURE.md # kvenno.app platform structure (IMPORTANT)
     ├── CLAUDE.md           # AI assistant guide
     ├── API_INTEGRATION.md  # External API integration
-    ├── DEPLOYMENT.md       # Production deployment
+    ├── DEPLOYMENT.md       # Production deployment (multi-path)
     ├── ENVIRONMENT_VARIABLES.md
     ├── SECURITY.md         # Security practices
     ├── TESTING.md          # Testing strategies
-    └── TROUBLESHOOTING.md  # Common issues
+    ├── TROUBLESHOOTING.md  # Common issues
+    ├── AZURE-AD-README.md  # Azure AD authentication overview
+    ├── AZURE-AD-IMPLEMENTATION-GUIDE.md  # Azure AD setup guide
+    ├── AZURE-AD-CHECKLIST.md  # Azure AD implementation tracker
+    └── AZURE-AD-QUICK-REFERENCE.md  # Azure AD quick reference
 ```
 
 ---
@@ -244,11 +249,18 @@ icelandic-chemistry-ai-tutor/
 
 - **[CLAUDE.md](CLAUDE.md)** - Comprehensive guide for AI assistants working on this project
 - **[API Integration](API_INTEGRATION.md)** - External API integration guide (Claude, OpenAI)
-- **[Deployment](DEPLOYMENT.md)** - Production deployment instructions
+- **[Deployment](DEPLOYMENT.md)** - Production deployment instructions (includes multi-path deployment)
 - **[Environment Variables](ENVIRONMENT_VARIABLES.md)** - Environment configuration reference
 - **[Security](SECURITY.md)** - Security practices and guidelines
 - **[Testing](TESTING.md)** - Testing strategies and best practices
 - **[Troubleshooting](TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Authentication Documentation
+
+- **[Azure AD README](AZURE-AD-README.md)** - Overview of Azure AD authentication
+- **[Azure AD Implementation Guide](AZURE-AD-IMPLEMENTATION-GUIDE.md)** - Step-by-step setup instructions
+- **[Azure AD Checklist](AZURE-AD-CHECKLIST.md)** - Track implementation progress
+- **[Azure AD Quick Reference](AZURE-AD-QUICK-REFERENCE.md)** - Quick lookups while coding
 
 ### Detailed Guides
 

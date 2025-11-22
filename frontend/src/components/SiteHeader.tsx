@@ -26,7 +26,7 @@ export function SiteHeader() {
           className="site-logo text-xl font-bold hover:opacity-80 transition-opacity flex items-center gap-2"
           style={{ color: '#f36b22' }}
         >
-          Kvenno Efnafræði
+          Efnafræðivefur Kvennó
         </a>
 
         {/* Header Actions */}
@@ -38,10 +38,10 @@ export function SiteHeader() {
               border: '2px solid #f36b22',
               color: '#f36b22'
             }}
-            aria-label="Admin aðgangur"
+            aria-label="Kennarar"
           >
             <UserCog className="w-4 h-4" />
-            <span className="hidden sm:inline">Admin</span>
+            <span className="hidden sm:inline">Kennarar</span>
           </button>
 
           <button
@@ -54,7 +54,7 @@ export function SiteHeader() {
             aria-label="Upplýsingar"
           >
             <Info className="w-4 h-4" />
-            <span className="hidden sm:inline">Info</span>
+            <span className="hidden sm:inline">Upplýsingar</span>
           </button>
         </div>
       </div>
