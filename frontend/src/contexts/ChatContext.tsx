@@ -145,9 +145,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       const success = saveConversation(state.sessionId, state.messages);
       if (!success) {
         // Only show error once per session using a flag
-        if (!(window as any).__storage_error_shown) {
+        interface WindowWithStorageError extends Window {
+          __storage_error_shown?: boolean;
+        }
+        const win = window as unknown as WindowWithStorageError;
+        if (!win.__storage_error_shown) {
           showToast('Viðvörun: Ekki tókst að vista samtal. Minni gæti verið fullt.', 'error');
-          (window as any).__storage_error_shown = true;
+          win.__storage_error_shown = true;
         }
       }
     }

@@ -238,7 +238,18 @@ function MetricCard({
 }
 
 // Cache Tab
-function CacheTab({ data }: { data: any }) {
+interface CacheEntry {
+  key: string;
+  hits: number;
+}
+
+interface CacheData {
+  size?: number;
+  entries?: CacheEntry[];
+  hitRate?: number;
+}
+
+function CacheTab({ data }: { data: CacheData }) {
   return (
     <div style={styles.tabContent}>
       <h3 style={styles.sectionTitle}>Response Cache</h3>
@@ -265,7 +276,7 @@ function CacheTab({ data }: { data: any }) {
         <p><strong>Cache Status:</strong></p>
         {data.entries?.length > 0 ? (
           <ul style={styles.list}>
-            {data.entries.slice(0, 5).map((entry: any, i: number) => (
+            {data.entries.slice(0, 5).map((entry: CacheEntry, i: number) => (
               <li key={i}>
                 {entry.key}: {entry.hits} hits
               </li>
