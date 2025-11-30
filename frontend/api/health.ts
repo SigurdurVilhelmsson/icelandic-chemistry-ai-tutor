@@ -45,16 +45,17 @@ export default async function handler(
       backend: backendData,
     });
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error('[Health API] Error:', {
-      name: error.name,
-      message: error.message,
+      name: err.name,
+      message: err.message,
       timestamp: new Date().toISOString(),
     });
 
     return res.status(503).json({
       status: 'error',
-      message: error.name === 'AbortError' || error.name === 'TimeoutError'
+      message: err.name === 'AbortError' || err.name === 'TimeoutError'
         ? 'Backend timeout'
         : 'Backend unavailable',
       timestamp: new Date().toISOString(),

@@ -10,12 +10,13 @@ import handler from '../chat';
  */
 
 // Mock fetch globally
-global.fetch = vi.fn();
+type MockedFetch = ReturnType<typeof vi.fn>;
+global.fetch = vi.fn() as MockedFetch;
 
 // Helper to create mock request
 function createMockRequest(
   method: string = 'POST',
-  body: any = {}
+  body: Record<string, unknown> = {}
 ): VercelRequest {
   return {
     method,
@@ -103,7 +104,7 @@ describe('Chat API Endpoint', () => {
         session_id: '123',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockBackendResponse,
       });
@@ -137,7 +138,7 @@ describe('Chat API Endpoint', () => {
         answer: 'Test answer',
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => mockBackendResponse,
       });
@@ -174,7 +175,7 @@ describe('Chat API Endpoint', () => {
     it('should handle backend timeout', async () => {
       const timeoutError = new Error('Timeout');
       timeoutError.name = 'AbortError';
-      (global.fetch as any).mockRejectedValueOnce(timeoutError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(timeoutError);
 
       const req = createMockRequest('POST', {
         question: 'What is chemistry?',
@@ -192,7 +193,7 @@ describe('Chat API Endpoint', () => {
     it('should handle TimeoutError', async () => {
       const timeoutError = new Error('Timeout');
       timeoutError.name = 'TimeoutError';
-      (global.fetch as any).mockRejectedValueOnce(timeoutError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(timeoutError);
 
       const req = createMockRequest('POST', {
         question: 'What is chemistry?',
@@ -209,7 +210,7 @@ describe('Chat API Endpoint', () => {
 
     it('should handle backend connection error', async () => {
       const fetchError = new Error('fetch failed');
-      (global.fetch as any).mockRejectedValueOnce(fetchError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(fetchError);
 
       const req = createMockRequest('POST', {
         question: 'What is chemistry?',
@@ -225,7 +226,7 @@ describe('Chat API Endpoint', () => {
     });
 
     it('should handle backend error response', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: false,
         status: 500,
         statusText: 'Internal Server Error',
@@ -245,7 +246,7 @@ describe('Chat API Endpoint', () => {
     });
 
     it('should handle backend JSON parse error', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => {
           throw new Error('Invalid JSON');
@@ -268,7 +269,7 @@ describe('Chat API Endpoint', () => {
 
   describe('Timeout Configuration', () => {
     it('should set 30 second timeout', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ answer: 'test' }),
       });
@@ -281,7 +282,7 @@ describe('Chat API Endpoint', () => {
       await handler(req, res);
 
       // Verify fetch was called with a signal that has timeout
-      const fetchCall = (global.fetch as any).mock.calls[0];
+      const fetchCall = (global.fetch as MockedFetch).mock.calls[0];
       expect(fetchCall[1]).toHaveProperty('signal');
     });
   });

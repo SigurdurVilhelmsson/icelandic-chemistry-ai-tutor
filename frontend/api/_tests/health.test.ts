@@ -10,7 +10,8 @@ import handler from '../health';
  */
 
 // Mock fetch globally
-global.fetch = vi.fn();
+type MockedFetch = ReturnType<typeof vi.fn>;
+global.fetch = vi.fn() as MockedFetch;
 
 // Helper to create mock request
 function createMockRequest(method: string = 'GET'): VercelRequest {
@@ -52,7 +53,7 @@ describe('Health Check API Endpoint', () => {
 
   describe('Successful Health Check', () => {
     it('should return ok status when backend is healthy', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ status: 'ok' }),
       });
@@ -79,7 +80,7 @@ describe('Health Check API Endpoint', () => {
     });
 
     it('should accept any HTTP method', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ status: 'ok' }),
       });
@@ -88,7 +89,7 @@ describe('Health Check API Endpoint', () => {
 
       for (const method of methods) {
         vi.resetAllMocks();
-        (global.fetch as any).mockResolvedValueOnce({
+        (global.fetch as MockedFetch).mockResolvedValueOnce({
           ok: true,
           json: async () => ({ status: 'ok' }),
         });
@@ -109,7 +110,7 @@ describe('Health Check API Endpoint', () => {
         uptime: 12345,
       };
 
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => backendData,
       });
@@ -148,7 +149,7 @@ describe('Health Check API Endpoint', () => {
     });
 
     it('should return error when backend is unhealthy', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: false,
         status: 500,
       });
@@ -170,7 +171,7 @@ describe('Health Check API Endpoint', () => {
     it('should handle backend timeout', async () => {
       const timeoutError = new Error('Timeout');
       timeoutError.name = 'AbortError';
-      (global.fetch as any).mockRejectedValueOnce(timeoutError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(timeoutError);
 
       const req = createMockRequest('GET');
       const res = createMockResponse();
@@ -189,7 +190,7 @@ describe('Health Check API Endpoint', () => {
     it('should handle TimeoutError', async () => {
       const timeoutError = new Error('Timeout');
       timeoutError.name = 'TimeoutError';
-      (global.fetch as any).mockRejectedValueOnce(timeoutError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(timeoutError);
 
       const req = createMockRequest('GET');
       const res = createMockResponse();
@@ -207,7 +208,7 @@ describe('Health Check API Endpoint', () => {
 
     it('should handle network errors', async () => {
       const networkError = new Error('Network error');
-      (global.fetch as any).mockRejectedValueOnce(networkError);
+      (global.fetch as MockedFetch).mockRejectedValueOnce(networkError);
 
       const req = createMockRequest('GET');
       const res = createMockResponse();
@@ -224,7 +225,7 @@ describe('Health Check API Endpoint', () => {
     });
 
     it('should handle backend JSON parse error gracefully', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => {
           throw new Error('Invalid JSON');
@@ -249,7 +250,7 @@ describe('Health Check API Endpoint', () => {
 
   describe('Timeout Configuration', () => {
     it('should set 5 second timeout for health checks', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ status: 'ok' }),
       });
@@ -260,14 +261,14 @@ describe('Health Check API Endpoint', () => {
       await handler(req, res);
 
       // Verify fetch was called with a signal that has timeout
-      const fetchCall = (global.fetch as any).mock.calls[0];
+      const fetchCall = (global.fetch as MockedFetch).mock.calls[0];
       expect(fetchCall[1]).toHaveProperty('signal');
     });
   });
 
   describe('Response Format', () => {
     it('should include timestamp in response', async () => {
-      (global.fetch as any).mockResolvedValueOnce({
+      (global.fetch as MockedFetch).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ status: 'ok' }),
       });

@@ -52,8 +52,7 @@ export function DevPanel({ show, defaultOpen = false }: DevPanelProps) {
     return saved ? JSON.parse(saved) : defaultOpen;
   });
   const [activeTab, setActiveTab] = useState<'api' | 'metrics' | 'cache' | 'env'>('api');
-  const [position, setPosition] = useState({ bottom: 0, right: 0 });
-  const [cacheData, setCacheData] = useState<any>({});
+  const [cacheData, setCacheData] = useState<Record<string, unknown>>({});
 
   const { logs } = useAPILogger();
 
@@ -239,7 +238,18 @@ function MetricCard({
 }
 
 // Cache Tab
-function CacheTab({ data }: { data: any }) {
+interface CacheEntry {
+  key: string;
+  hits: number;
+}
+
+interface CacheData {
+  size?: number;
+  entries?: CacheEntry[];
+  hitRate?: number;
+}
+
+function CacheTab({ data }: { data: CacheData }) {
   return (
     <div style={styles.tabContent}>
       <h3 style={styles.sectionTitle}>Response Cache</h3>
@@ -266,7 +276,7 @@ function CacheTab({ data }: { data: any }) {
         <p><strong>Cache Status:</strong></p>
         {data.entries?.length > 0 ? (
           <ul style={styles.list}>
-            {data.entries.slice(0, 5).map((entry: any, i: number) => (
+            {data.entries.slice(0, 5).map((entry: CacheEntry, i: number) => (
               <li key={i}>
                 {entry.key}: {entry.hits} hits
               </li>

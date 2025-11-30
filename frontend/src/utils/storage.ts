@@ -28,7 +28,7 @@ export function saveConversation(sessionId: string, messages: Message[]): boolea
       messages: messages.map(msg => ({
         ...msg,
         timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp
-      })) as any,
+      })) as Message[],
       lastUpdated: new Date().toISOString()
     };
 
@@ -65,7 +65,7 @@ export function saveConversation(sessionId: string, messages: Message[]): boolea
           messages: messages.map(msg => ({
             ...msg,
             timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp
-          })) as any,
+          })) as Message[],
           lastUpdated: new Date().toISOString()
         };
         localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));
@@ -93,7 +93,7 @@ export function loadConversation(sessionId: string): Message[] | null {
 
     return conversation.messages.map(msg => ({
       ...msg,
-      timestamp: new Date(msg.timestamp as any)
+      timestamp: new Date(msg.timestamp as string | Date)
     }));
   } catch (error) {
     console.error('Error loading conversation:', error);

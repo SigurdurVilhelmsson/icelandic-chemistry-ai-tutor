@@ -40,9 +40,9 @@ interface APILogEntry {
   timestamp: Date;
   endpoint: string;
   method: string;
-  requestBody?: any;
+  requestBody?: unknown;
   responseStatus?: number;
-  responseBody?: any;
+  responseBody?: unknown;
   duration?: number;
   error?: string;
 }

@@ -79,21 +79,22 @@ export default async function handler(
     // Return to frontend
     return res.status(200).json(data);
 
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as Error;
     console.error(`[${requestId}] Error:`, {
-      name: error.name,
-      message: error.message,
+      name: err.name,
+      message: err.message,
       timestamp: new Date().toISOString(),
     });
 
     // User-friendly errors in Icelandic
-    if (error.name === 'AbortError' || error.name === 'TimeoutError') {
+    if (err.name === 'AbortError' || err.name === 'TimeoutError') {
       return res.status(504).json({
         error: 'Beiðni tók of langan tíma'
       });
     }
 
-    if (error.message && error.message.includes('fetch')) {
+    if (err.message && err.message.includes('fetch')) {
       return res.status(503).json({
         error: 'Ekki tókst að tengjast'
       });
