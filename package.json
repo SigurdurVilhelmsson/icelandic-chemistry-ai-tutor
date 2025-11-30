@@ -9,6 +9,13 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
+  "scripts": {
+  "check:status": "node scripts/check-status.mjs",
+  "check:security": "pnpm audit && echo '✅ Security check complete'",
+  "check:quality": "pnpm type-check && pnpm lint && pnpm format:check",
+  "check:deps": "pnpm outdated || true",
+  "check:all": "pnpm check:security && pnpm check:quality && pnpm check:deps"
+},  
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
