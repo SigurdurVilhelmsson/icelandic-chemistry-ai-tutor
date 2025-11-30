@@ -28,7 +28,7 @@ export function saveConversation(sessionId: string, messages: Message[]): boolea
       messages: messages.map(msg => ({
         ...msg,
         timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp
-      })) as Message[],
+      })) as unknown as Message[],
       lastUpdated: new Date().toISOString()
     };
 
@@ -65,7 +65,7 @@ export function saveConversation(sessionId: string, messages: Message[]): boolea
           messages: messages.map(msg => ({
             ...msg,
             timestamp: msg.timestamp instanceof Date ? msg.timestamp.toISOString() : msg.timestamp
-          })) as Message[],
+          })) as unknown as Message[],
           lastUpdated: new Date().toISOString()
         };
         localStorage.setItem(CONVERSATIONS_KEY, JSON.stringify(conversations));

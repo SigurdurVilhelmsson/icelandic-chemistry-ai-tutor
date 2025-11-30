@@ -139,32 +139,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Save conversation whenever messages change
-  useEffect(() => {
-    if (state.messages.length > 0) {
-      const success = saveConversation(state.sessionId, state.messages);
-      if (!success) {
-        // Only show error once per session using a flag
-        interface WindowWithStorageError extends Window {
-          __storage_error_shown?: boolean;
-        }
-        const win = window as unknown as WindowWithStorageError;
-        if (!win.__storage_error_shown) {
-          showToast('Viðvörun: Ekki tókst að vista samtal. Minni gæti verið fullt.', 'error');
-          win.__storage_error_shown = true;
-        }
-      }
-    }
-  }, [state.messages, state.sessionId, showToast]);
-
-  // Cleanup all toast timeouts on unmount
-  useEffect(() => {
-    return () => {
-      toastTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
-      toastTimeoutsRef.current.clear();
-    };
-  }, []);
-
+  // Define showToast before it's used in other useEffects
   const showToast = useCallback((message: string, type: ToastMessage['type']) => {
     const id = `toast_${Date.now()}_${Math.random()}`;
     dispatch({
@@ -190,6 +165,32 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       toastTimeoutsRef.current.delete(id);
     }
     dispatch({ type: 'REMOVE_TOAST', payload: id });
+  }, []);
+
+  // Save conversation whenever messages change
+  useEffect(() => {
+    if (state.messages.length > 0) {
+      const success = saveConversation(state.sessionId, state.messages);
+      if (!success) {
+        // Only show error once per session using a flag
+        interface WindowWithStorageError extends Window {
+          __storage_error_shown?: boolean;
+        }
+        const win = window as unknown as WindowWithStorageError;
+        if (!win.__storage_error_shown) {
+          showToast('Viðvörun: Ekki tókst að vista samtal. Minni gæti verið fullt.', 'error');
+          win.__storage_error_shown = true;
+        }
+      }
+    }
+  }, [state.messages, state.sessionId, showToast]);
+
+  // Cleanup all toast timeouts on unmount
+  useEffect(() => {
+    return () => {
+      toastTimeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
+      toastTimeoutsRef.current.clear();
+    };
   }, []);
 
   const sendMessage = useCallback(async (question: string) => {
