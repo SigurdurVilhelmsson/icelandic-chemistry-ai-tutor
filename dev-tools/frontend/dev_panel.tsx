@@ -52,8 +52,7 @@ export function DevPanel({ show, defaultOpen = false }: DevPanelProps) {
     return saved ? JSON.parse(saved) : defaultOpen;
   });
   const [activeTab, setActiveTab] = useState<'api' | 'metrics' | 'cache' | 'env'>('api');
-  const [position, setPosition] = useState({ bottom: 0, right: 0 });
-  const [cacheData, setCacheData] = useState<any>({});
+  const [cacheData, setCacheData] = useState<Record<string, unknown>>({});
 
   const { logs } = useAPILogger();
 
